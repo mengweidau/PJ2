@@ -9,6 +9,8 @@ public class EnemyAI : MonoBehaviour
     private Transform target = null;
     private int waypointIndex = 0;
 
+    //public Transform destinationPoint;
+
     //public StateMachine sm;
     //private AudioSource m_audioSource;
     //[SerializeField] private AudioClip m_NearSound;
@@ -41,15 +43,18 @@ public class EnemyAI : MonoBehaviour
         {
             GetNextwaypoint();
         }
+
+        //transform.GetComponent<NavMeshAgent>().destination = destinationPoint.position;
     }
 
     void GetNextwaypoint()
     {
         if(waypointIndex >= Waypoints.waypoints.Length-1)
         {
-            this.transform.position = new Vector3(-0.59f, -5.0f, -3.22f);
+            //this.transform.position = new Vector3(-0.59f, -5.0f, -3.22f);
             waypointIndex = 0;
-            //Destroy(gameObject);
+            Destroy(gameObject);
+            Debug.Log("Enemy has escaped, health decreases!");
         }
         waypointIndex++;
         target = Waypoints.waypoints[waypointIndex];
