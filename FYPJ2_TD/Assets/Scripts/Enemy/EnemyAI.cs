@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyAI : MonoBehaviour
+public class EnemyAI : Entity
 {
-    public float speed = 10.0f;
-    private Transform target = null;
+    //public float speed = 10.0f;
+    private Transform _target = null;
     private int waypointIndex = 0;
 
     //public Transform destinationPoint;
@@ -14,11 +14,37 @@ public class EnemyAI : MonoBehaviour
     //public StateMachine sm;
     //private AudioSource m_audioSource;
     //[SerializeField] private AudioClip m_NearSound;
-    
+
+    //enum EnemyType
+    //{
+    //    INFANTRY = 0,
+    //    HOUND
+    //};
+    //EnemyType enemyType = EnemyType.INFANTRY;
+
+    public EnemyAI() //constructor, this is for one type of enemy <-- i think that depends on how you plan to make different types of enemies tho
+    {
+        s_name = "enemy";
+       
+    }
 
     // Use this for initialization
     void Start()
     {
+        //switch (enemyType)
+        //{
+        //    case EnemyType.INFANTRY:
+
+        //        i_health = 1;
+        //        i_moveSpeed = 1;
+        //        break;
+        //    case EnemyType.HOUND:
+
+        //        i_health = 2;
+        //        i_moveSpeed = 1;
+        //        break;
+        //}
+
         //m_audioSource = GetComponent<AudioSource>();
 
         //sm = new StateMachine();
@@ -27,7 +53,9 @@ public class EnemyAI : MonoBehaviour
         //sm.AddState(new Search("Search", this));
         //sm.AddState(new Chase("Chase", this));
 
-        target = Waypoints.waypoints[0];
+        _target = Waypoints.waypoints[0];
+
+
     }
 
     // Update is called once per frame
@@ -36,10 +64,10 @@ public class EnemyAI : MonoBehaviour
         //sm.Update();
         //print(sm.GetCurrentState());
 
-        Vector3 direction = target.position - transform.position;
-        transform.Translate(direction.normalized * speed * Time.deltaTime);
+        Vector3 direction = _target.position - transform.position;
+        transform.Translate(direction.normalized * i_moveSpeed * Time.deltaTime);
 
-        if (Vector3.Distance(transform.position, target.position) <= 0.1f)
+        if (Vector3.Distance(transform.position, _target.position) <= 0.1f)
         {
             GetNextwaypoint();
         }
@@ -57,7 +85,7 @@ public class EnemyAI : MonoBehaviour
             Debug.Log("Enemy has escaped, health decreases!");
         }
         waypointIndex++;
-        target = Waypoints.waypoints[waypointIndex];
+        _target = Waypoints.waypoints[waypointIndex];
 
     }
 
@@ -75,4 +103,6 @@ public class EnemyAI : MonoBehaviour
     //    m_audioSource.clip = m_NearSound;
     //    m_audioSource.Play();
     //}
+
+
 }

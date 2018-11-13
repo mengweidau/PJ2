@@ -12,14 +12,14 @@ public class SpawnManager : MonoBehaviour
         WAITING,
         COUNTING
     };
-
-    [System.Serializable]
+    
     // Wave class to determine what type of enemy, amount of enemy, rate of spawning in that specific wave.
     // Current testing phase: Preset enemy/spawn/rate .
     // Later on, Todo: Random enemy/spawn/rate etc etc..
-    public class Wave   
+    [System.Serializable]
+    public class Wave
     {
-        public GameObject enemyPrefab;
+        public Transform[] enemyPrefab;
         public int spawnAmount;
         public float rateOfSpawn;
     }
@@ -74,14 +74,15 @@ public class SpawnManager : MonoBehaviour
         state = SpawnState.SPAWNING;
         for (int i = 0; i < _wave.spawnAmount; i++)
         {
-            SpawnEnemy(_wave.enemyPrefab);
+            int randomEnemy = Random.Range(0, _wave.enemyPrefab.Length);
+            SpawnEnemy(_wave.enemyPrefab[randomEnemy]);
             yield return new WaitForSeconds(1.0f / _wave.rateOfSpawn);
         }
         state = SpawnState.WAITING;
         yield break;
     }
 
-    void SpawnEnemy(GameObject _enemy)
+    void SpawnEnemy(Transform _enemy)
     {
         Instantiate(_enemy, spawnPoint.position, spawnPoint.rotation);
     }
@@ -114,4 +115,5 @@ public class SpawnManager : MonoBehaviour
             nextWave++;
         }
     }
+
 }

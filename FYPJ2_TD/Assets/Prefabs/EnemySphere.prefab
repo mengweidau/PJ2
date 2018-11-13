@@ -96,8 +96,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 511dbce4d9c4ed54da543269b638b18d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
-  destinationPoint: {fileID: 0}
+  i_health: 1
+  i_attackDmg: 0
+  i_attackSpeed: 0
+  i_moveSpeed: 2
+  s_name: enemy
+  target: []
+  talkBuddy: {fileID: 0}
 --- !u!135 &135275812384643964
 SphereCollider:
   m_ObjectHideFlags: 1
