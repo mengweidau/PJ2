@@ -6,19 +6,16 @@ public class Entity : MonoBehaviour {
 
     [SerializeField] protected int i_health, i_maxHealth, i_attackDmg, i_attackSpeed, i_moveSpeed;
     [SerializeField] protected string s_name;
-    [SerializeField] protected List<GameObject> targets;
-    //[SerializeField] protected GameObject talkBuddy;
+    [SerializeField] protected List<GameObject> targets;          //targets that are detected in trigger collider
+    [SerializeField] protected List<GameObject> attackingTargets; //targets thats going to be attacked
 
     public Entity() //constructor
     {
         i_health = i_maxHealth = i_attackDmg = i_attackSpeed = i_moveSpeed = 0;
         s_name = "noname";
+        targets = new List<GameObject>();
+        attackingTargets = new List<GameObject>();
     }
-
-    //public void Talk()
-    //{
-    //    Debug.Log(s_name + " is happy");
-    //}
 
     public void DecreaseHealth(int dmg)
     {
@@ -50,4 +47,7 @@ public class Entity : MonoBehaviour {
 
     public void SetName(string name) { s_name = name; }
     public string GetName(){    return s_name; }
+
+    public List<GameObject> GetTargets() { return targets; }
+    public List<GameObject> GetAttackingTargets() { return attackingTargets; }
 }

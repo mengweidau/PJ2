@@ -6,7 +6,7 @@ public class ArcherTower : Entity {
 
     [SerializeField] private float attackTimer;
     [SerializeField] private int numOfTargets;
-    [SerializeField] private List<GameObject> shootingTargets;
+    //[SerializeField] private List<GameObject> shootingTargets;
     [SerializeField] private BuildingPlot parentPlot;
     [SerializeField] GameObject arrowPrefab;
 
@@ -23,13 +23,13 @@ public class ArcherTower : Entity {
         i_attackDmg = 2;
         i_attackSpeed = 3;
         s_name = "Archer Tower";
-        targets = new List<GameObject>();
+        //targets = new List<GameObject>();
 
 
         arrowPrefab = null;
         attackTimer = 0.0f;
         numOfTargets = 1;
-        shootingTargets = new List<GameObject>();
+        //shootingTargets = new List<GameObject>();
     }
     
     private void Update()
@@ -53,24 +53,24 @@ public class ArcherTower : Entity {
         if (other.CompareTag("Enemy"))
         {
             targets.Remove(other.gameObject);
-            shootingTargets.Remove(other.gameObject);
+            attackingTargets.Remove(other.gameObject);
         }
     }
 
     private void DetermineShootingTargets()
     {
-        if (shootingTargets.Count < numOfTargets && targets.Count != 0)
+        if (attackingTargets.Count < numOfTargets && targets.Count != 0)
         {
             for (int i = 0; i < numOfTargets; ++i)
             {
-                shootingTargets.Add(targets[i]);
+                attackingTargets.Add(targets[i]);
             }
         }
     }
 
     private void Shoot()
     {
-        if (shootingTargets.Count > 0)
+        if (attackingTargets.Count > 0)
         {
             attackTimer += Time.deltaTime * 1.0f;
             //Debug.Log("archer shoot timer: " +attackTimer);
@@ -79,7 +79,7 @@ public class ArcherTower : Entity {
             {
                 //Debug.Log("shot");
                 GameObject arrow = Instantiate(arrowPrefab, transform.position, Quaternion.identity);
-                arrow.GetComponent<Arrow>().SetArrowTarget(shootingTargets[0]);
+                arrow.GetComponent<Arrow>().SetArrowTarget(attackingTargets[0]);
                 arrow.GetComponent<Arrow>().SetParentTower(this);
 
                 attackTimer = 0.0f;
@@ -89,11 +89,11 @@ public class ArcherTower : Entity {
 
     public void RemoveTarget(GameObject gameobject)
     {
-        for (int i = 0; i < shootingTargets.Count; ++i)
+        for (int i = 0; i < attackingTargets.Count; ++i)
         {
-            if (shootingTargets[i] == gameobject)
+            if (attackingTargets[i] == gameobject)
             {
-                shootingTargets.Remove(gameobject);
+                attackingTargets.Remove(gameobject);
                 targets.Remove(gameobject);
             }
         }

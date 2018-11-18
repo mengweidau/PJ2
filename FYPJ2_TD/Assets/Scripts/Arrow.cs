@@ -39,7 +39,7 @@ public class Arrow : MonoBehaviour {
     {
         arrowTarget = target;
         arrowTargetTransform = target.transform;
-        if (target.GetComponent<Entity>())
+        if (target.GetComponent<Entity>() && target != null)
             entityClass = target.GetComponent<Entity>();
     }
 
