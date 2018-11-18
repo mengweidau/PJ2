@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class EnemySkeleton : Entity
 {
-    public Transform targetWaypoint = null;
-    public GameObject[] targetUnit = null;
-    private int waypointIndex = 0;
-
     public StateMachine sm;
+    public Transform targetWaypoint = null;
+
+    private int waypointIndex = 0;
+    private int numOfTargets = 1;
 
     // Use this for initialization
     void Start()
@@ -31,7 +31,8 @@ public class EnemySkeleton : Entity
     void Update()
     {
         sm.Update();
-        //print(sm.GetCurrentState());
+        SetAttackingTarget();
+        print(sm.GetCurrentState());
     }
 
     public void GetNextwaypoint()
@@ -44,5 +45,35 @@ public class EnemySkeleton : Entity
         }
         waypointIndex++;
         targetWaypoint = Waypoints.waypoints[waypointIndex];
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            Debug.Log("Enter");
+            targets.Add(other.gameObject);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            Debug.Log("Exit");
+            targets.Remove(other.gameObject);
+            attackingTargets.Remove(other.gameObject);
+        }
+    }
+
+    public void SetAttackingTarget()
+    {
+        if (targets.Count != 0 && attackingTargets.Count < numOfTargets)
+        {
+            for (int i = 0; i < numOfTargets; ++i)
+            {
+                attackingTargets.Add(targets[i]);
+            }
+        }
     }
 }

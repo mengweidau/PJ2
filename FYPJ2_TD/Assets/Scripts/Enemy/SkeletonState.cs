@@ -14,8 +14,8 @@ public class SkeletonPatrol : State
 
     public override void Enter()
     {
+        //Debug.Log("Patrol");
         thisEnemy.SetMoveSpeed(1);
-        Debug.Log("Patrol");
     }
 
     public override void Update()
@@ -25,18 +25,15 @@ public class SkeletonPatrol : State
         if (Vector3.Distance(thisEnemy.transform.position, thisEnemy.targetWaypoint.position) <= 0.1f)
         {
             thisEnemy.GetNextwaypoint();
-            //Debug.Log("reached");
         }
         else
         {
             thisEnemy.transform.Translate(direction.normalized * thisEnemy.GetMoveSpeed() * Time.deltaTime);
-            //Debug.Log("go");
         }
 
-        thisEnemy.targetUnit = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject unit in thisEnemy.targetUnit)
+        for (int i = 0; i < thisEnemy.GetAttackingTargets().Count; i++)
         {
-            if (Vector3.Distance(thisEnemy.transform.position, unit.transform.position) < 1.0f)
+            if (Vector3.Distance(thisEnemy.transform.position, thisEnemy.GetAttackingTargets()[i].transform.position) <= 1.0f)
             {
                 thisEnemy.sm.SetNextState("Chase");
             }
@@ -46,6 +43,7 @@ public class SkeletonPatrol : State
 
     public override void Exit()
     {
+
     }
 }
 
@@ -62,26 +60,26 @@ public class SkeletonChase : State
 
     public override void Enter()
     {
-        Debug.Log("Chase");
-        thisEnemy.SetMoveSpeed(2);
+        //Debug.Log("Chase");
+        thisEnemy.SetMoveSpeed(1);
+
     }
 
     public override void Update()
     {
-        thisEnemy.targetUnit = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject unit in thisEnemy.targetUnit)
+        for (int i = 0; i < thisEnemy.GetAttackingTargets().Count; i++)
         {
-            if (Vector3.Distance(thisEnemy.transform.position, unit.transform.position) > 1.0f)
+            if (Vector3.Distance(thisEnemy.transform.position, thisEnemy.GetAttackingTargets()[i].transform.position) > 1.0f)
             {
                 thisEnemy.sm.SetNextState("Patrol");
             }
-            else if (Vector3.Distance(thisEnemy.transform.position, unit.transform.position) <= 0.1f)
+            else if (Vector3.Distance(thisEnemy.transform.position, thisEnemy.GetAttackingTargets()[i].transform.position) < 0.2f)
             {
                 thisEnemy.sm.SetNextState("Attack");
             }
             else
             {
-                direction = unit.transform.position - thisEnemy.transform.position;
+                direction = thisEnemy.GetAttackingTargets()[i].transform.position - thisEnemy.transform.position;
                 thisEnemy.transform.Translate(direction.normalized * thisEnemy.GetMoveSpeed() * Time.deltaTime);
             }
         }
@@ -105,25 +103,22 @@ public class SkeletonAttack : State
 
     public override void Enter()
     {
-        Debug.Log("Attack");
+        //Debug.Log("Attack");
+        thisEnemy.SetMoveSpeed(0);
     }
 
     public override void Update()
     {
-        thisEnemy.targetUnit = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject unit in thisEnemy.targetUnit)
-        {           
-            if (Vector3.Distance(thisEnemy.transform.position, unit.transform.position) <= 0.1f)
+        for (int i = 0; i < thisEnemy.GetAttackingTargets().Count; i++)
+        {
+            attackCooldown -= Time.deltaTime;
+            if (attackCooldown <= 0)
             {
-                attackCooldown -= Time.deltaTime;
-                if (attackCooldown <= 0)
-                {
-                    unit.GetComponent<Entity>().SetHealth(unit.GetComponent<Entity>().GetHealth() - thisEnemy.GetAttackDmg());
-                    attackCooldown = 1.0f;
-                    Debug.Log("Unit getting attacked");
-                }
+                thisEnemy.GetAttackingTargets()[i].GetComponent<Entity>().SetHealth(thisEnemy.GetAttackingTargets()[i].GetComponent<Entity>().GetHealth() - thisEnemy.GetAttackDmg());
+                attackCooldown = 1.0f;
+                Debug.Log("Unit getting attacked");
             }
-            else
+            if (Vector3.Distance(thisEnemy.transform.position, thisEnemy.GetAttackingTargets()[i].transform.position) > 1.0f)
             {
                 thisEnemy.sm.SetNextState("Patrol");
             }
