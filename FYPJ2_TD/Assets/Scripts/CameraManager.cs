@@ -4,30 +4,43 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour {
 
-    [Header("Camera limit")]
+
     [SerializeField]
-    private float minPanX = -1.0f;
+    private float minPanX = -1.0f, maxPanX = 1.0f;
     [SerializeField]
-    private float maxPanX = 1.0f;
-    //[SerializeField]
-    //private float minPanY = 0.5f, maxPanY = 1.0f;
+    private float minPanY = -1.0f, maxPanY = 1.0f;
     [SerializeField]
     private float minPanZ = -1.0f, maxPanZ = 1.0f;
     [SerializeField]
     private float minZoom = 50.0f, maxZoom = 60.0f;
     [SerializeField]
-    private float unityPanningSpeed = 1.0f, unityZoomSpeed = 0.25f;
-    
+    private float unityPanningSpeed = 1.0f;
+    [SerializeField]
+    float deltaMagnitudeDiff;
+    [SerializeField]
+    private float mobileZoomSpeed = 1.0f;
+
+    //mobile move variables
+    public bool moved = false;
+    private float timerChecked;
+    [SerializeField] private float dragSpeed = 0.01f;
+
     void Start () {
-        //transform.position = new Vector3(66.0f, 349.0f, -75.0f);
         Camera.main.fieldOfView = maxZoom;
+        timerChecked = 0.0f;
     }
 	
 	void Update () {
 #if UNITY_EDITOR
-        UnityCameraMovement();
-        UnityCameraTap();
+        //UnityCameraMovement();
 #endif
+        MobileCameraControls();
+
+        //panning limit
+        transform.position = new Vector3(
+            Mathf.Clamp(transform.position.x, minPanX, maxPanX),
+            Mathf.Clamp(transform.position.y, minPanY, maxPanY),
+            Mathf.Clamp(transform.position.z, minPanZ, maxPanZ));
     }
 
     void UnityCameraMovement()
@@ -45,51 +58,85 @@ public class CameraManager : MonoBehaviour {
             transform.Translate(Vector3.right * unityPanningSpeed * Time.deltaTime);
 
         //zoom controls
-        if (Input.GetKey(KeyCode.Equals) || Input.GetKey(KeyCode.KeypadPlus))
-            Camera.main.fieldOfView -= unityZoomSpeed;
-        if (Input.GetKey(KeyCode.Minus) || Input.GetKey(KeyCode.KeypadMinus))
-            Camera.main.fieldOfView += unityZoomSpeed;
-
-        //zooming limit
-        Camera.main.fieldOfView = Mathf.Clamp(Camera.main.fieldOfView, minZoom, maxZoom);
-
-        //panning limit
-        transform.position = new Vector3(
-            Mathf.Clamp(transform.position.x, minPanX, maxPanX), 
-            1, 
-            Mathf.Clamp(transform.position.z, minPanZ, maxPanZ));
-    }
-    bool UnityCameraTap()
-    {
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetKey(KeyCode.Equals) || Input.GetKey(KeyCode.KeypadPlus) && transform.position.y > minPanY)
         {
-            Vector3 mousePosFar = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.farClipPlane);
-            Vector3 mousePosNear = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane);
-
-            Vector3 mousePosF = Camera.main.ScreenToWorldPoint(mousePosFar);
-            Vector3 mousePosN = Camera.main.ScreenToWorldPoint(mousePosNear);
-
-            Vector3 dir = mousePosF - mousePosN;
-            Debug.DrawRay(mousePosN, dir, Color.red);
-
-            RaycastHit hit;
-            if (Physics.Raycast(mousePosN, dir, out hit))
-            {
-                Debug.Log(hit.transform.name);
-
-
-                //if (hit.transform.tag == "LocationMark")
-                //{
-                //    PlaceMarker(hit.transform.GetComponent<LocationMarker>().GetPortsPos());
-                //}
-                //else
-                //{
-                //    PlaceMarker(new Vector3(hit.point.x, -125.0f, hit.point.z));
-                //    SpawnRipple(new Vector3(hit.point.x, -125.0f, hit.point.z));
-                //}
-            }
-            return true;
+            //zoom in, decrease the minimum border
+            transform.Translate(Vector3.forward * unityPanningSpeed * Time.deltaTime);
+            minPanX -= unityPanningSpeed * Time.deltaTime;
+            minPanZ -= unityPanningSpeed * Time.deltaTime * 0.5f;
+            maxPanX += unityPanningSpeed * Time.deltaTime;
+            maxPanZ += unityPanningSpeed * Time.deltaTime * 0.5f;
         }
-        return false;
+        else if (Input.GetKey(KeyCode.Minus) || Input.GetKey(KeyCode.KeypadMinus) && transform.position.y < maxPanY)
+        {
+            transform.Translate(-Vector3.forward * unityPanningSpeed * Time.deltaTime);
+            minPanX += unityPanningSpeed * Time.deltaTime;
+            minPanZ += unityPanningSpeed * Time.deltaTime * 0.5f;
+            maxPanX -= unityPanningSpeed * Time.deltaTime;
+            maxPanZ -= unityPanningSpeed * Time.deltaTime * 0.5f;
+        }
+    }
+
+    void MobileCameraControls()
+    {
+        //Camera zooming
+        if (Input.touchCount > 1)
+        {
+            MobileZoom();
+        }
+        else if (Input.touchCount == 1)
+        {
+            if (Input.GetTouch(0).phase == TouchPhase.Moved)
+                MobileDragging();
+            else if (Input.GetTouch(0).phase == TouchPhase.Ended && !moved)
+            {
+                //MobileTap();
+            }
+            else if (Input.GetTouch(0).phase == TouchPhase.Ended)
+                moved = false;
+        }
+    }
+
+    void MobileDragging()
+    {
+        timerChecked += Time.deltaTime;
+        if (timerChecked < .90f)//drag delay
+            return;
+
+        moved = true;
+        Vector2 touchDeltaPos = Input.GetTouch(0).deltaPosition;
+        transform.Translate(-touchDeltaPos.x * dragSpeed, -touchDeltaPos.y * dragSpeed, 0);
+    }
+
+    void MobileZoom()
+    {
+        Debug.Log("zooming- mobile");
+        Touch touchZero = Input.GetTouch(0);
+        Touch touchOne = Input.GetTouch(1);
+
+        Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
+        Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+
+        float prevTouchDeltaMagnitude = (touchZeroPrevPos - touchOnePrevPos).magnitude;
+        float touchDeltaMagnitude = (touchZero.position - touchOne.position).magnitude;
+
+        deltaMagnitudeDiff = prevTouchDeltaMagnitude - touchDeltaMagnitude;
+
+        if (deltaMagnitudeDiff > 0 && transform.position.y < maxPanY) //zoom out, increase pos.y
+        {
+            transform.Translate(-Vector3.forward * mobileZoomSpeed * Time.deltaTime);
+            minPanX += mobileZoomSpeed * Time.deltaTime;
+            minPanZ += mobileZoomSpeed * Time.deltaTime * 0.5f;
+            maxPanX -= mobileZoomSpeed * Time.deltaTime;
+            maxPanZ -= mobileZoomSpeed * Time.deltaTime * 0.5f;
+        }
+        else if (deltaMagnitudeDiff < 0 && transform.position.y > minPanY)//zoom in, decrease pos
+        {
+            transform.Translate(Vector3.forward * mobileZoomSpeed * Time.deltaTime);
+            minPanX -= mobileZoomSpeed * Time.deltaTime;
+            minPanZ -= mobileZoomSpeed * Time.deltaTime * 0.5f;
+            maxPanX += mobileZoomSpeed * Time.deltaTime;
+            maxPanZ += mobileZoomSpeed * Time.deltaTime * 0.5f;
+        }
     }
 }

@@ -10,17 +10,17 @@ public class Boy : Entity{
         i_health = 1;
     }
 
-    private void Update()
-    {
-        if (talkBuddy != null && Input.GetKeyDown(KeyCode.T))
-            Talk();
-    }
+    //private void Update()
+    //{
+    //    if (talkBuddy != null && Input.GetKeyDown(KeyCode.T))
+    //        Talk();
+    //}
 
-    public new void Talk()
-    {
-        if (talkBuddy.GetComponent<Entity>())
-        {
-            Debug.Log(s_name + " greets " + talkBuddy.GetComponent<Entity>().GetName());
-        }
-    }
+    //public new void Talk()
+    //{
+    //    if (talkBuddy.GetComponent<Entity>())
+    //    {
+    //        Debug.Log(s_name + " greets " + talkBuddy.GetComponent<Entity>().GetName());
+    //    }
+    //}
 }

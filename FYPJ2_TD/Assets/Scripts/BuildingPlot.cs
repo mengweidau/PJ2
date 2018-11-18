@@ -62,6 +62,7 @@ public class BuildingPlot : Entity {
         {
             f_buildTimer -= 1.0f * Time.deltaTime;
             Debug.Log("building!: " + f_buildTimer);
+            //to add - building progress bar
 
             if (f_buildTimer <= 0.0f)
             {
@@ -74,11 +75,10 @@ public class BuildingPlot : Entity {
                     case BuildingType.ArcherTower:
                         if (archerPrefab != null)
                         {
-                            Instantiate(archerPrefab, transform.position, transform.rotation);
+                            GameObject go = Instantiate(archerPrefab, transform.position, transform.rotation);
+                            go.GetComponent<ArcherTower>().SetParentPlot(this);
                             Debug.Log("built archer tower");
                         }
-                        else
-                            Debug.Log("empty archer tower prefab");
                         break;
                     default:
                         Debug.Log("no building type was built");
@@ -89,6 +89,13 @@ public class BuildingPlot : Entity {
                 gameObject.SetActive(false);
             }
         }
+    }
+
+    public void PlotReturn()
+    {
+        gameObject.SetActive(true);
+        buildCanvas.SetActive(false);
+        plotButton.interactable = true;
     }
 
     public void SetBuildingType(BuildingType type)
@@ -126,12 +133,10 @@ public class BuildingPlot : Entity {
         if (!b_built)
         {
             b_built = true;
-            f_buildTimer = 5.0f;
+            f_buildTimer = f_arrowDur;
             buildingType = BuildingType.ArcherTower;
             //reduce resources from resource manager, 
         }
-        //instantiate a arrow tower at this position
-        //make instantiated object know its parent, and when its destroy make it setactive=true its parent (its respective plot)
     }
     public void BuildFootmanTower()
     {

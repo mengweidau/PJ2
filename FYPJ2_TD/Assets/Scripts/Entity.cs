@@ -4,23 +4,37 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour {
 
-    [SerializeField] protected int i_health, i_attackDmg, i_attackSpeed, i_moveSpeed;
+    [SerializeField] protected int i_health, i_maxHealth, i_attackDmg, i_attackSpeed, i_moveSpeed;
     [SerializeField] protected string s_name;
-    [SerializeField] protected GameObject[] target;
-    [SerializeField] protected GameObject talkBuddy;
+    [SerializeField] protected List<GameObject> targets;
+    //[SerializeField] protected GameObject talkBuddy;
 
     public Entity() //constructor
     {
-        i_health = i_attackDmg = i_attackSpeed = i_moveSpeed = 0;
+        i_health = i_maxHealth = i_attackDmg = i_attackSpeed = i_moveSpeed = 0;
         s_name = "noname";
     }
 
-    public void Talk()
+    //public void Talk()
+    //{
+    //    Debug.Log(s_name + " is happy");
+    //}
+
+    public void DecreaseHealth(int dmg)
     {
-        Debug.Log(s_name + " is happy");
+        if (i_health > 0)
+            i_health -= dmg;
+        if (i_health < 0)
+            i_health = 0;
     }
 
-    
+    public void IncreaseHealth(int heal)
+    {
+        if (i_health < i_maxHealth)
+            i_health += heal;
+        if (i_health > i_maxHealth)
+            i_health = i_maxHealth;
+    }
 
     public void SetHealth(int health){  i_health = health;  }
     public int GetHealth() { return i_health; }

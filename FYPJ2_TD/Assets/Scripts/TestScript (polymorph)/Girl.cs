@@ -9,9 +9,9 @@ public class Girl : Entity {
         s_name = "jill";
     }
 
-    private void Update()
-    {
-        if (target != null && Input.GetKeyDown(KeyCode.T))
-            Talk();
-    }
+    //private void Update()
+    //{
+    //    if (target != null && Input.GetKeyDown(KeyCode.T))
+    //        Talk();
+    //}
 }
