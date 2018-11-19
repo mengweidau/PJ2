@@ -54,6 +54,10 @@ MonoBehaviour:
   spawnPoint: {fileID: 0}
   wave:
   - enemyPrefab:
+    - {fileID: 4814572384530332, guid: e7489ceb02638d24bb0911a271633e86, type: 2}
+    spawnAmount: 2
+    rateOfSpawn: 1
+  - enemyPrefab:
     - {fileID: 4443122480016318, guid: 9f98942089f5e2041af186a8c081d2a5, type: 2}
     spawnAmount: 2
     rateOfSpawn: 1
@@ -62,13 +66,9 @@ MonoBehaviour:
     spawnAmount: 2
     rateOfSpawn: 1
   - enemyPrefab:
-    - {fileID: 4233664993923408, guid: e7489ceb02638d24bb0911a271633e86, type: 2}
-    spawnAmount: 2
-    rateOfSpawn: 1
-  - enemyPrefab:
+    - {fileID: 4814572384530332, guid: e7489ceb02638d24bb0911a271633e86, type: 2}
     - {fileID: 4443122480016318, guid: 9f98942089f5e2041af186a8c081d2a5, type: 2}
     - {fileID: 4402699206288774, guid: 1ea6f9409dc1d9f489c8325c8438ef98, type: 2}
-    - {fileID: 4233664993923408, guid: e7489ceb02638d24bb0911a271633e86, type: 2}
     spawnAmount: 5
     rateOfSpawn: 1
   timeBetweenWaves: 3
