@@ -15,10 +15,8 @@ public class CameraManager : MonoBehaviour {
     private float minZoom = 50.0f, maxZoom = 60.0f;
     [SerializeField]
     private float unityPanningSpeed = 1.0f;
-    [SerializeField]
-    float deltaMagnitudeDiff;
-    [SerializeField]
-    private float mobileZoomSpeed = 1.0f;
+    [SerializeField] float deltaMagnitudeDiff;
+    [SerializeField] private float mobileZoomSpeed = 1.0f;
 
     //mobile move variables
     public bool moved = false;
@@ -31,10 +29,11 @@ public class CameraManager : MonoBehaviour {
     }
 	
 	void Update () {
-#if UNITY_EDITOR
-        //UnityCameraMovement();
-#endif
+        PcControls();
+
+#if UNITY_ANDROID
         MobileCameraControls();
+#endif
 
         //panning limit
         transform.position = new Vector3(
@@ -43,7 +42,7 @@ public class CameraManager : MonoBehaviour {
             Mathf.Clamp(transform.position.z, minPanZ, maxPanZ));
     }
 
-    void UnityCameraMovement()
+    void PcControls()
     {
         //move up/down
         if (Input.GetKey(KeyCode.S))
