@@ -9,7 +9,12 @@ public class Arrow : MonoBehaviour {
     [SerializeField] private Entity entityClass;
     [SerializeField] private Transform arrowTargetTransform;
     [SerializeField] int arrowTravelSpeed = 3, arrowRotateSpeed = 5;
-    
+
+    private void Awake()
+    {
+        arrowRotateSpeed = 15;
+    }
+
     // Update is called once per frame
     void Update () {
 		if (arrowTarget != null)
@@ -45,7 +50,7 @@ public class Arrow : MonoBehaviour {
 
     public void SetParentTower(ArcherTower parent)
     {
-        if (parentTower != null)
+        if (parentTower == null)
             parentTower = parent;
     }
 }

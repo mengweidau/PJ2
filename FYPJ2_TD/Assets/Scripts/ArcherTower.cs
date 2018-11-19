@@ -30,7 +30,6 @@ public class ArcherTower : Entity {
 
     private void Awake()
     {
-        arrowPrefab = null;
         attackTimer = 0.0f;
         numOfTargets = 1;
 
@@ -93,8 +92,8 @@ public class ArcherTower : Entity {
             {
                 //Debug.Log("shot");
                 GameObject arrow = Instantiate(arrowPrefab, transform.position, Quaternion.identity);
-                arrow.GetComponent<Arrow>().SetArrowTarget(attackingTargets[0]);
                 arrow.GetComponent<Arrow>().SetParentTower(this);
+                arrow.GetComponent<Arrow>().SetArrowTarget(attackingTargets[0]);
 
                 attackTimer = 0.0f;
             }

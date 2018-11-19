@@ -18,10 +18,10 @@ public class EnemySkeleton : Entity
     {
         targetWaypoint = Waypoints.waypoints[0];
         s_name = "Skeleton";
-        i_health = 16;
+        i_health = 4;
         i_attackDmg = 1;
         i_attackSpeed = 1;
-        i_moveSpeed = 1;
+        i_moveSpeed = 0.5f;
 
         sm = new StateMachine();
         sm.AddState(new SkeletonPatrol("Patrol", this));

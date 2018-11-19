@@ -8,7 +8,7 @@ public class BuildingPlot : Entity {
     //click on any button in build canvas - instantiates a building, setactive=false this plot
     
     [SerializeField] private float f_buildTimer;
-    [SerializeField] private float f_lumberDur, f_arrowDur;
+    [SerializeField] private float f_lumberDur = 2, f_arrowDur = 2;
     [SerializeField] private bool b_built;
     private GameObject plotCanvas,buildCanvas;
     private Button plotButton;
@@ -34,8 +34,8 @@ public class BuildingPlot : Entity {
     private void Awake()
     {
         f_buildTimer = 0.0f;
-        f_lumberDur = 4.0f;
-        f_arrowDur = 4.0f;
+        //f_lumberDur = 4.0f;
+        //f_arrowDur = 4.0f;
         b_built = false;
         
         if (transform.Find("PlotCanvas"))
@@ -61,7 +61,7 @@ public class BuildingPlot : Entity {
         if (f_buildTimer > 0.0f)
         {
             f_buildTimer -= 1.0f * Time.deltaTime;
-            Debug.Log("building!: " + f_buildTimer);
+            //Debug.Log("building!: " + f_buildTimer);
             //to add - building progress bar
 
             if (f_buildTimer <= 0.0f)

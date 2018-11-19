@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour {
 
-    [SerializeField] protected int i_health, i_maxHealth, i_attackDmg, i_attackSpeed, i_moveSpeed;
+    [SerializeField] protected int i_health, i_maxHealth, i_attackDmg, i_attackSpeed;
+    [SerializeField] protected float i_moveSpeed;  //todo- movespeed, atkspeed to float
     [SerializeField] protected string s_name;
     [SerializeField] protected List<GameObject> targets;          //targets that are detected in trigger collider
     [SerializeField] protected List<GameObject> attackingTargets; //targets thats going to be attacked
 
     public Entity() //constructor
     {
-        i_health = i_maxHealth = i_attackDmg = i_attackSpeed = i_moveSpeed = 0;
+        i_health = i_maxHealth = i_attackDmg = i_attackSpeed = 0;
+        i_moveSpeed = 0.0f;
         s_name = "noname";
         targets = new List<GameObject>();
         attackingTargets = new List<GameObject>();
@@ -43,7 +45,7 @@ public class Entity : MonoBehaviour {
     public int GetAttackSpeed() { return i_attackSpeed; }
 
     public void SetMoveSpeed(int moveSpeed) { i_moveSpeed = moveSpeed; }
-    public int GetMoveSpeed() { return i_moveSpeed; }
+    public float GetMoveSpeed() { return i_moveSpeed; }
 
     public void SetName(string name) { s_name = name; }
     public string GetName(){    return s_name; }

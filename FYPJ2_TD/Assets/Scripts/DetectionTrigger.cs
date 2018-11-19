@@ -13,8 +13,14 @@ public class DetectionTrigger : MonoBehaviour {
     private void OnTriggerEnter(Collider other)
     {
         //add other.gameobj if it is an enemy/has enemy tag
-        if (other.CompareTag("Enemy"))
-            parent.GetTargets().Add(other.gameObject);
+        if (other.CompareTag("Enemy")) //find out why it adds the 1st detected enemy twice when enemy moves too fast
+        {
+            for (int i = 0; i < parent.GetTargets().Count; ++i)
+            {
+                if (other.gameObject != parent.GetTargets()[i])
+                    parent.GetTargets().Add(other.gameObject);
+            }
+        }
     }
 
     //remove potential target
