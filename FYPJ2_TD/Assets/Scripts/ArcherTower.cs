@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ArcherTower : Entity {
 
@@ -9,6 +10,8 @@ public class ArcherTower : Entity {
     //[SerializeField] private List<GameObject> shootingTargets;
     [SerializeField] private BuildingPlot parentPlot;
     [SerializeField] GameObject arrowPrefab;
+    [SerializeField] GameObject towerCanvas, upgradeCanvas;
+    private Button towerButton;
 
     enum ArcherLevel
     {
@@ -23,15 +26,26 @@ public class ArcherTower : Entity {
         i_attackDmg = 2;
         i_attackSpeed = 3;
         s_name = "Archer Tower";
-        //targets = new List<GameObject>();
+    }
 
-
+    private void Awake()
+    {
         arrowPrefab = null;
         attackTimer = 0.0f;
         numOfTargets = 1;
-        //shootingTargets = new List<GameObject>();
+
+        if (transform.Find("TowerCanvas"))
+        {
+            towerCanvas = transform.Find("TowerCanvas").gameObject;
+            towerButton = towerCanvas.transform.Find("TowerButton").GetComponent<Button>();
+        }
+        if (transform.Find("UpgradeCanvas"))
+        {
+            upgradeCanvas = transform.Find("UpgradeCanvas").gameObject;
+            upgradeCanvas.SetActive(false);
+        }
     }
-    
+
     private void Update()
     {
         DetermineShootingTargets();
@@ -106,9 +120,21 @@ public class ArcherTower : Entity {
 
     public void SellArcherTower()
     {
-        //increase (original cost of the tower * 0.8f)
-        parentPlot.PlotReturn();
+        //increase (original cost of the tower * 0.85f)
+        if (parentPlot != null)
+            parentPlot.PlotReturn();
+        Destroy(gameObject);
     }
 
-    //To do - add buttons func for: open/close upgrade canvas
+    public void SelectedTower()
+    {
+        upgradeCanvas.SetActive(true);
+        towerButton.interactable = false;
+    }
+
+    public void CancelUpgrade()
+    {
+        upgradeCanvas.SetActive(false);
+        towerButton.interactable = true;
+    }
 }

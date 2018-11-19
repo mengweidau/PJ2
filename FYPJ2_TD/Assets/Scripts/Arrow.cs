@@ -45,6 +45,7 @@ public class Arrow : MonoBehaviour {
 
     public void SetParentTower(ArcherTower parent)
     {
-        parentTower = parent;
+        if (parentTower != null)
+            parentTower = parent;
     }
 }
