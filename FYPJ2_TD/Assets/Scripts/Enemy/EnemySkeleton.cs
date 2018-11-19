@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class EnemySkeleton : Entity
 {
+    [HideInInspector]
     public StateMachine sm;
     public Transform targetWaypoint = null;
+    public SpriteRenderer sr;
+    public Animator anim;
 
     private int waypointIndex = 0;
     private int numOfTargets = 1;
@@ -24,6 +27,9 @@ public class EnemySkeleton : Entity
         sm.AddState(new SkeletonPatrol("Patrol", this));
         sm.AddState(new SkeletonChase("Chase", this));
         sm.AddState(new SkeletonAttack("Attack", this));
+
+        sr = gameObject.GetComponentInChildren<SpriteRenderer>();
+        anim = gameObject.GetComponentInChildren<Animator>();
     }
 
 
@@ -33,6 +39,50 @@ public class EnemySkeleton : Entity
         sm.Update();
         SetAttackingTarget();
         print(sm.GetCurrentState());
+
+        if (targetWaypoint.transform.position.x < transform.position.x)
+        {
+            sr.flipX = true;
+        }
+        else
+        {
+            sr.flipX = false;
+        }
+
+        for (int i = 0; i < numOfTargets; ++i)
+        {
+            if (sm.GetCurrentState() == "Attack")
+            {
+                anim.SetBool("Attack", true);
+                if (GetAttackingTargets()[i].transform.position.x < transform.position.x)
+                {
+                    sr.flipX = true;
+                }
+                else
+                {
+                    sr.flipX = false;
+                }
+            }
+            else if (sm.GetCurrentState() == "Chase")
+            {
+                if (GetAttackingTargets()[i].transform.position.x < transform.position.x)
+                {
+                    sr.flipX = true;
+                }
+                else
+                {
+                    sr.flipX = false;
+                }
+            }
+            else
+            {
+                anim.SetBool("Chase", false);
+                anim.SetBool("Attack", false);
+            }
+        }
+
+        if (GetHealth() <= 0)
+            Destroy(gameObject);
     }
 
     public void GetNextwaypoint()

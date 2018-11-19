@@ -97,12 +97,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   i_health: 1
+  i_maxHealth: 0
   i_attackDmg: 0
   i_attackSpeed: 0
   i_moveSpeed: 2
   s_name: enemy
-  target: []
-  talkBuddy: {fileID: 0}
+  targets: []
+  attackingTargets: []
 --- !u!135 &135275812384643964
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -110,7 +111,7 @@ SphereCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1561694636961464}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5

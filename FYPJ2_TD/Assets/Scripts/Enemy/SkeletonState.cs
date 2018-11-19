@@ -40,10 +40,8 @@ public class SkeletonPatrol : State
         }
     }
 
-
     public override void Exit()
     {
-
     }
 }
 
@@ -62,7 +60,6 @@ public class SkeletonChase : State
     {
         //Debug.Log("Chase");
         thisEnemy.SetMoveSpeed(1);
-
     }
 
     public override void Update()
