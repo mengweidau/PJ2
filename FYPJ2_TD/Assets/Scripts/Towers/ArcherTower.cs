@@ -22,9 +22,9 @@ public class ArcherTower : Entity {
 
 	public ArcherTower()
     {
-        i_health = 10;
-        i_attackDmg = 2;
-        i_attackSpeed = 3;
+        f_health = 10.0f;
+        f_attackDmg = 2.0f;
+        f_attackSpeed = 3.0f;
         s_name = "Archer Tower";
     }
 
@@ -88,7 +88,7 @@ public class ArcherTower : Entity {
             attackTimer += Time.deltaTime * 1.0f;
             //Debug.Log("archer shoot timer: " +attackTimer);
             
-            if (arrowPrefab != null && attackTimer > i_attackSpeed)
+            if (arrowPrefab != null && attackTimer > f_attackSpeed)
             {
                 //Debug.Log("shot");
                 GameObject arrow = Instantiate(arrowPrefab, transform.position, Quaternion.identity);

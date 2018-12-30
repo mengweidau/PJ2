@@ -65,7 +65,7 @@ public class EnemyAI : Entity
         //print(sm.GetCurrentState());
 
         Vector3 direction = _target.position - transform.position;
-        transform.Translate(direction.normalized * i_moveSpeed * Time.deltaTime);
+        transform.Translate(direction.normalized * f_moveSpeed * Time.deltaTime);
 
         if (Vector3.Distance(transform.position, _target.position) <= 0.1f)
         {

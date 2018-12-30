@@ -6,11 +6,11 @@ public class TargetTemp : Entity {
 
 	public TargetTemp()
     {
-        i_health = 5;
+        f_health = 5.0f;
     }
     private void Update()
     {
-        if (i_health <= 0)
+        if (f_health <= 0.0f)
             Destroy(gameObject);
     }
 }
