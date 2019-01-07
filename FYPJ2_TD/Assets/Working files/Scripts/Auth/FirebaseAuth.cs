@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Firebase.Auth;
-using System.Threading.Tasks;
 using UnityEngine.SceneManagement;
 
-
-public class FirebaseInit : MonoBehaviour
+[CreateAssetMenu(fileName = "FirebaseAuth", menuName = "FirebaseAuth")]
+public class FirebaseAuth : ScriptableObject
 {
     protected Firebase.Auth.FirebaseAuth auth;
-    string email = "";
-    string password = "";
-
-
+    //string email = "";
+    //string password = "";
+    
     // Use this for initialization
     void Start()
     {
@@ -38,42 +36,43 @@ public class FirebaseInit : MonoBehaviour
         });
     }
 
-    void OnGUI()
+    //void OnGUI()
+    //{
+    //    GUILayout.BeginArea(new Rect(Screen.width * .25f, 0, Screen.width * .5f, Screen.height * .25f));
+    //    GUILayout.FlexibleSpace();
+
+    //    //Create user
+    //    GUILayout.BeginHorizontal();
+    //    GUILayout.Label("email:", GUILayout.Width(150));
+    //    email = GUILayout.TextField(email);
+    //    GUILayout.EndHorizontal();
+
+    //    GUILayout.BeginHorizontal();
+    //    GUILayout.Label("Password:", GUILayout.Width(150));
+    //    password = GUILayout.TextField(password);
+    //    GUILayout.EndHorizontal();
+
+    //    GUILayout.BeginHorizontal();
+    //    if (GUILayout.Button("Create User"))
+    //    {
+    //        //CreateUser();
+    //    }
+    //    GUILayout.EndHorizontal();
+
+    //    GUILayout.BeginHorizontal();
+    //    if (GUILayout.Button("Sign In"))
+    //    {
+    //        //SignInWithEmailAndPassword();
+    //    }
+    //    GUILayout.EndHorizontal();
+    //    GUILayout.EndArea();
+    //}
+
+    public void CreateUser(string email, string password)
     {
-        GUILayout.BeginArea(new Rect(Screen.width * .25f, 0, Screen.width * .5f, Screen.height * .25f));
-        GUILayout.FlexibleSpace();
+        //Debug.Log(email);
+        //Debug.Log(password);
 
-        //Create user
-        GUILayout.BeginHorizontal();
-        GUILayout.Label("email:", GUILayout.Width(150));
-        email = GUILayout.TextField(email);
-        GUILayout.EndHorizontal();
-
-        GUILayout.BeginHorizontal();
-        GUILayout.Label("Password:", GUILayout.Width(150));
-        password = GUILayout.TextField(password);
-        GUILayout.EndHorizontal();
-
-        GUILayout.BeginHorizontal();
-        if (GUILayout.Button("Create User"))
-        {
-            CreateUser();
-        }
-        GUILayout.EndHorizontal();
-
-        GUILayout.BeginHorizontal();
-        if (GUILayout.Button("Sign In"))
-        {
-            SignInWithEmailAndPassword();
-        }
-        GUILayout.EndHorizontal();
-        GUILayout.EndArea();
-    }
-
-    public void CreateUser()
-    {
-        Debug.Log(email);
-        Debug.Log(password);
         //check whether email is valid, password is valid
         //create user if valid email/password
         //prompt user to re-input textfields with proper requirements
@@ -97,9 +96,9 @@ public class FirebaseInit : MonoBehaviour
         });
     }
 
-    public void SignInWithEmailAndPassword()
+    public void SignInWithEmailAndPassword(string _email, string _password)
     {
-        auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task => {
+        auth.SignInWithEmailAndPasswordAsync(_email, _password).ContinueWith(task => {
             if (task.IsCanceled)
             {
                 Debug.LogError("SignInWithEmailAndPasswordAsync was canceled.");
