@@ -2,77 +2,140 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Firebase.Auth;
+using Firebase;
+using Firebase.Database;
+using Firebase.Unity.Editor;
 using UnityEngine.SceneManagement;
 
 [CreateAssetMenu(fileName = "FirebaseAuth", menuName = "FirebaseAuth")]
 public class FirebaseAuth : ScriptableObject
 {
-    protected Firebase.Auth.FirebaseAuth auth;
-    //string email = "";
-    //string password = "";
-    
-    // Use this for initialization
-    void Start()
+    Firebase.Auth.FirebaseAuth auth;
+    Firebase.Auth.FirebaseUser firebaseUser;
+    DatabaseReference mDatabaseRef;
+
+    public class User
     {
+        public string username;
+        public int val;
 
-        Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
+        public User()
         {
-            var dependencyStatus = task.Result;
-            if (dependencyStatus == Firebase.DependencyStatus.Available)
-            {
-                //Create and hold a reference to your FirebaseApp, i.e.
-                auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
-                // where app is a Firebase.FirebaseApp property of your application class.
+        }
 
-                // Set a flag here indicating that Firebase is ready to use by your
-                // application.
-            }
-            else
-            {
-                UnityEngine.Debug.LogError(System.String.Format(
-                  "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
-                // Firebase Unity SDK is not safe to use here.
-            }
-        });
+        public User(string _name, int _val)
+        {
+            this.username = _name;
+            this.val = _val;
+        }
     }
 
-    //void OnGUI()
+
+    public Firebase.Auth.FirebaseAuth GetAuth()
+    {
+        if (auth == null)
+            InitializeFirebase();
+
+        return auth;
+    }
+
+    public DatabaseReference GetReference()
+    {
+        if (mDatabaseRef == null)
+        {
+            FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://fyp2-td.firebaseio.com/");
+            mDatabaseRef = FirebaseDatabase.DefaultInstance.RootReference;
+        }
+        return mDatabaseRef;
+    }
+
+    //public Firebase.Auth.FirebaseAuth Auth
     //{
-    //    GUILayout.BeginArea(new Rect(Screen.width * .25f, 0, Screen.width * .5f, Screen.height * .25f));
-    //    GUILayout.FlexibleSpace();
-
-    //    //Create user
-    //    GUILayout.BeginHorizontal();
-    //    GUILayout.Label("email:", GUILayout.Width(150));
-    //    email = GUILayout.TextField(email);
-    //    GUILayout.EndHorizontal();
-
-    //    GUILayout.BeginHorizontal();
-    //    GUILayout.Label("Password:", GUILayout.Width(150));
-    //    password = GUILayout.TextField(password);
-    //    GUILayout.EndHorizontal();
-
-    //    GUILayout.BeginHorizontal();
-    //    if (GUILayout.Button("Create User"))
+    //    get
     //    {
-    //        //CreateUser();
-    //    }
-    //    GUILayout.EndHorizontal();
+    //        if (auth == null)
+    //        {
+    //            InitializeFirebase();
+    //        }
 
-    //    GUILayout.BeginHorizontal();
-    //    if (GUILayout.Button("Sign In"))
-    //    {
-    //        //SignInWithEmailAndPassword();
+    //        return auth;
     //    }
-    //    GUILayout.EndHorizontal();
-    //    GUILayout.EndArea();
     //}
+
+
+    // Handle initialization of the necessary firebase modules:
+    void InitializeFirebase()
+    {
+        Debug.Log("Setting up Firebase Auth");
+        auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+        auth.StateChanged += AuthStateChanged;
+        AuthStateChanged(this, null);
+    }
+
+    // Track state changes of the auth object.
+    void AuthStateChanged(object sender, System.EventArgs eventArgs)
+    {
+        if (auth.CurrentUser != firebaseUser)
+        {
+            bool signedIn = firebaseUser != auth.CurrentUser && auth.CurrentUser != null;
+            if (!signedIn && firebaseUser != null)
+            {
+                Debug.Log("Signed out " + firebaseUser.UserId);
+            }
+            firebaseUser = auth.CurrentUser;
+            if (signedIn)
+            {
+                Debug.Log("Signed in " + firebaseUser.UserId);
+            }
+        }
+    }
+
+    void OnDestroy()
+    {
+        auth.StateChanged -= AuthStateChanged;
+        auth = null;
+    }
+    
+    public void writeNewUser(string _name, int _val)
+    {
+        if (firebaseUser == null || mDatabaseRef == null)
+        {
+            return;
+        }
+
+        User user = new User(_name, _val);
+        string json = JsonUtility.ToJson(user);
+        mDatabaseRef.Child("users").Child(firebaseUser.UserId).SetRawJsonValueAsync(json);
+    }
+
+    public void FetchUserData()
+    {
+        //if (firebaseUser == null || mDatabaseRef == null)
+        //{
+        //    Debug.LogError((firebaseUser == null ? "user: NULL" : "") + (mDatabaseRef == null ? "Reference: NULL" : ""));
+        //    return;
+        //}
+
+        FirebaseDatabase.DefaultInstance.GetReference("users").Child(firebaseUser.UserId).GetValueAsync().ContinueWith(task => 
+        {
+          if (task.IsFaulted)
+          {
+              // Handle the error...
+          }
+          else if (task.IsCompleted)
+          {
+              DataSnapshot snapshot = task.Result;
+                // Do something with snapshot...
+                Debug.Log("FOUND DATABASE");
+                Debug.Log("username id : " + snapshot.Child(firebaseUser.UserId).Value.ToString());
+                Debug.Log("username: " + snapshot.Child("username").Value.ToString());
+                Debug.Log("val: " + snapshot.Child("val").Value.ToString());
+          }
+      });
+    }
 
     public void CreateUser(string email, string password)
     {
-        //Debug.Log(email);
-        //Debug.Log(password);
-
         //check whether email is valid, password is valid
         //create user if valid email/password
         //prompt user to re-input textfields with proper requirements
@@ -93,10 +156,11 @@ public class FirebaseAuth : ScriptableObject
             Firebase.Auth.FirebaseUser newUser = task.Result;
             Debug.LogFormat("Firebase user created successfully: {0} ({1})",
                 newUser.DisplayName, newUser.UserId);
+            firebaseUser = newUser;
         });
     }
 
-    public void SignInWithEmailAndPassword(string _email, string _password)
+    public void SignInUser(string _email, string _password)
     {
         auth.SignInWithEmailAndPasswordAsync(_email, _password).ContinueWith(task => {
             if (task.IsCanceled)
@@ -114,7 +178,8 @@ public class FirebaseAuth : ScriptableObject
             Debug.LogFormat("User signed in successfully: {0} ({1})",
                 newUser.DisplayName, newUser.UserId);
 
-            SceneManager.LoadScene("Level1", LoadSceneMode.Single);
+            firebaseUser = newUser;
+            SceneManager.LoadScene("MenuScene", LoadSceneMode.Single);
         });
     }
 }
