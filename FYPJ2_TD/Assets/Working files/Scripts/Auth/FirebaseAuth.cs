@@ -99,9 +99,7 @@ public class FirebaseAuth : ScriptableObject
     public void writeNewUser(string _name, int _val)
     {
         if (firebaseUser == null || mDatabaseRef == null)
-        {
             return;
-        }
 
         User user = new User(_name, _val);
         string json = JsonUtility.ToJson(user);
@@ -110,13 +108,10 @@ public class FirebaseAuth : ScriptableObject
 
     public void FetchUserData()
     {
-        //if (firebaseUser == null || mDatabaseRef == null)
-        //{
-        //    Debug.LogError((firebaseUser == null ? "user: NULL" : "") + (mDatabaseRef == null ? "Reference: NULL" : ""));
-        //    return;
-        //}
+        if (firebaseUser == null || mDatabaseRef == null)
+            return;
 
-        FirebaseDatabase.DefaultInstance.GetReference("users").Child(firebaseUser.UserId).GetValueAsync().ContinueWith(task => 
+        mDatabaseRef.Child("users").Child(firebaseUser.UserId).GetValueAsync().ContinueWith(task => 
         {
           if (task.IsFaulted)
           {
@@ -127,11 +122,30 @@ public class FirebaseAuth : ScriptableObject
               DataSnapshot snapshot = task.Result;
                 // Do something with snapshot...
                 Debug.Log("FOUND DATABASE");
-                Debug.Log("username id : " + snapshot.Child(firebaseUser.UserId).Value.ToString());
                 Debug.Log("username: " + snapshot.Child("username").Value.ToString());
                 Debug.Log("val: " + snapshot.Child("val").Value.ToString());
-          }
-      });
+
+                /*
+                 * Dictionary<string, System.Object> datalist = (Dictionary<string, System.Object>)task.Result.Value;
+                // Do something with snapshot...
+                Debug.Log("FOUND DATABASE");
+                Debug.Log("username id : " + (string)datalist["username"]);
+                Debug.Log("val : " + System.Convert.ToUInt32( datalist["val"]));
+                //Debug.Log("username: " + snapshot.Child("username").Value.ToString());
+                //Debug.Log("val: " + snapshot.Child("val").Value.ToString());
+                 */
+
+                /*
+                 Debug.Log("FOUND DATABASE");
+                Debug.Log("username: " + snapshot.Child("username").Value.ToString());
+                Debug.Log("val: " + snapshot.Child("val").Value.ToString());
+
+                User user = JsonUtility.FromJson<User>(snapshot.Value.ToString());
+                Debug.Log("username: " + user.username);
+                Debug.Log("val: " + user.val);
+                 */
+            }
+        });
     }
 
     public void CreateUser(string email, string password)
@@ -140,7 +154,7 @@ public class FirebaseAuth : ScriptableObject
         //create user if valid email/password
         //prompt user to re-input textfields with proper requirements
 
-        auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWith(task => {
+        GetAuth().CreateUserWithEmailAndPasswordAsync(email, password).ContinueWith(task => {
             if (task.IsCanceled)
             {
                 Debug.LogError("CreateUserWithEmailAndPasswordAsync was canceled.");
