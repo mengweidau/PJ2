@@ -115,7 +115,12 @@ public class FirebaseAuth : ScriptableObject
         {
           if (task.IsFaulted)
           {
-              // Handle the error...
+                // Handle the error...
+                Debug.Log("task.IsFaulted");
+            }
+          else if (task.IsCanceled)
+          {
+                Debug.Log("task.IsCanceled");
           }
           else if (task.IsCompleted)
           {
