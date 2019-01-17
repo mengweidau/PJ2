@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class EnemyAI : Entity
 {
@@ -25,7 +26,6 @@ public class EnemyAI : Entity
     public EnemyAI() //constructor, this is for one type of enemy <-- i think that depends on how you plan to make different types of enemies tho
     {
         s_name = "enemy";
-       
     }
 
     // Use this for initialization

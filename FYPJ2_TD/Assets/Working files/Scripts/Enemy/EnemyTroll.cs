@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EnemySkeleton : Entity
+public class EnemyTroll : Entity
 {
+
     [HideInInspector]
     public StateMachine sm;
     public Transform targetWaypoint = null;
@@ -20,18 +21,18 @@ public class EnemySkeleton : Entity
     void Start()
     {
         targetWaypoint = Waypoints.waypoints[0];
-        s_name = "Skeleton";
-        f_health = 4.0f;
-        f_attackDmg = 1.0f;
-        f_attackSpeed = 1.0f;
-        f_moveSpeed = 1.0f;
+        s_name = "Troll";
+        f_health = 8.0f;
+        f_attackDmg = 2.0f;
+        f_attackSpeed = 0.5f;
+        f_moveSpeed = 0.5f;
 
         health = f_health;
 
         sm = new StateMachine();
-        sm.AddState(new SkeletonPatrol("Patrol", this));
-        sm.AddState(new SkeletonChase("Chase", this));
-        sm.AddState(new SkeletonAttack("Attack", this));
+        sm.AddState(new TrollPatrol("Patrol", this));
+        sm.AddState(new TrollChase("Chase", this));
+        sm.AddState(new TrollAttack("Attack", this));
 
         sr = gameObject.GetComponentInChildren<SpriteRenderer>();
         anim = gameObject.GetComponentInChildren<Animator>();
@@ -87,7 +88,7 @@ public class EnemySkeleton : Entity
             }
         }
 
-        healthBar.fillAmount = GetHealth() / health; 
+        healthBar.fillAmount = GetHealth() / health;
 
         if (GetHealth() <= 0)
             Destroy(gameObject);
