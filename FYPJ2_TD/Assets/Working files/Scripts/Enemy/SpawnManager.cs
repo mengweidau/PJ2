@@ -72,6 +72,7 @@ public class SpawnManager : MonoBehaviour
     IEnumerator SpawnWave(Wave _wave)
     {
         state = SpawnState.SPAWNING;
+        //_wave.spawnAmount = Random.RandomRange(1, 10);
         for (int i = 0; i < _wave.spawnAmount; i++)
         {
             int randomEnemy = Random.Range(0, _wave.enemyPrefab.Length);

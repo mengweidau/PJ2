@@ -123,6 +123,7 @@ public class ArcherTower : Entity {
         if (parentPlot != null)
             parentPlot.PlotReturn();
         Destroy(gameObject);
+        parentPlot.b_built = false;
     }
 
     public void SelectedTower()

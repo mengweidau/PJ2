@@ -170,12 +170,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f14caeff32542b4b9642bddc584f32e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  f_health: 0
+  f_health: 8
   f_maxHealth: 0
-  f_attackDmg: 0
-  f_attackSpeed: 0
-  f_moveSpeed: 0
-  s_name: noname
+  f_attackDmg: 2
+  f_attackSpeed: 0.5
+  f_moveSpeed: 0.5
+  s_name: Troll
   targets: []
   attackingTargets: []
   sm: {fileID: 0}

@@ -214,36 +214,16 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
-    - target: {fileID: 223063874252452952, guid: e709d2d626940de48b8ca49553fcc127,
-        type: 2}
-      propertyPath: m_SortingLayerID
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 223063874252452952, guid: e709d2d626940de48b8ca49553fcc127,
-        type: 2}
-      propertyPath: m_SortingOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114938875680902628, guid: e709d2d626940de48b8ca49553fcc127,
-        type: 2}
-      propertyPath: f_lumberDur
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 114938875680902628, guid: e709d2d626940de48b8ca49553fcc127,
-        type: 2}
-      propertyPath: f_arrowDur
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 114938875680902628, guid: e709d2d626940de48b8ca49553fcc127,
-        type: 2}
-      propertyPath: archerPrefab
-      value: 
-      objectReference: {fileID: 1416718358519094, guid: 56b031a56b5018c489e7e0b9b1775a8e,
-        type: 2}
     - target: {fileID: 1661955272182624, guid: e709d2d626940de48b8ca49553fcc127, type: 2}
       propertyPath: m_Name
       value: BuildingPlot (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 114938875680902628, guid: e709d2d626940de48b8ca49553fcc127,
+        type: 2}
+      propertyPath: lumberPrefab
+      value: 
+      objectReference: {fileID: 1251329677299746, guid: 74f433b13280ec042847b81d662dca6c,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e709d2d626940de48b8ca49553fcc127, type: 2}
   m_IsPrefabAsset: 0
@@ -401,6 +381,28 @@ Prefab:
       propertyPath: archerPrefab
       value: 
       objectReference: {fileID: 1416718358519094, guid: 56b031a56b5018c489e7e0b9b1775a8e,
+        type: 2}
+    - target: {fileID: 1006017391365100, guid: e709d2d626940de48b8ca49553fcc127, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1518436656945280, guid: e709d2d626940de48b8ca49553fcc127, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577512619791540, guid: e709d2d626940de48b8ca49553fcc127, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1608432231177290, guid: e709d2d626940de48b8ca49553fcc127, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114938875680902628, guid: e709d2d626940de48b8ca49553fcc127,
+        type: 2}
+      propertyPath: lumberPrefab
+      value: 
+      objectReference: {fileID: 1251329677299746, guid: 74f433b13280ec042847b81d662dca6c,
         type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e709d2d626940de48b8ca49553fcc127, type: 2}
@@ -561,6 +563,12 @@ Prefab:
       propertyPath: m_Name
       value: BuildingPlot (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 114938875680902628, guid: e709d2d626940de48b8ca49553fcc127,
+        type: 2}
+      propertyPath: lumberPrefab
+      value: 
+      objectReference: {fileID: 1251329677299746, guid: 74f433b13280ec042847b81d662dca6c,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e709d2d626940de48b8ca49553fcc127, type: 2}
   m_IsPrefabAsset: 0
@@ -767,36 +775,16 @@ Prefab:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
-    - target: {fileID: 223063874252452952, guid: e709d2d626940de48b8ca49553fcc127,
-        type: 2}
-      propertyPath: m_SortingLayerID
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 223063874252452952, guid: e709d2d626940de48b8ca49553fcc127,
-        type: 2}
-      propertyPath: m_SortingOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114938875680902628, guid: e709d2d626940de48b8ca49553fcc127,
-        type: 2}
-      propertyPath: f_lumberDur
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 114938875680902628, guid: e709d2d626940de48b8ca49553fcc127,
-        type: 2}
-      propertyPath: f_arrowDur
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 114938875680902628, guid: e709d2d626940de48b8ca49553fcc127,
-        type: 2}
-      propertyPath: archerPrefab
-      value: 
-      objectReference: {fileID: 1416718358519094, guid: 56b031a56b5018c489e7e0b9b1775a8e,
-        type: 2}
     - target: {fileID: 1661955272182624, guid: e709d2d626940de48b8ca49553fcc127, type: 2}
       propertyPath: m_Name
       value: BuildingPlot (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 114938875680902628, guid: e709d2d626940de48b8ca49553fcc127,
+        type: 2}
+      propertyPath: lumberPrefab
+      value: 
+      objectReference: {fileID: 1251329677299746, guid: 74f433b13280ec042847b81d662dca6c,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e709d2d626940de48b8ca49553fcc127, type: 2}
   m_IsPrefabAsset: 0
@@ -947,7 +935,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4287123132279334, guid: 89d7ba2371e19564cb4399fe9dc6bce7, type: 2}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 89d7ba2371e19564cb4399fe9dc6bce7, type: 2}

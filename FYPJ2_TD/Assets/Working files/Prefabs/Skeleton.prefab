@@ -170,12 +170,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a65cc4dc893e2d443aed424ac3818de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  f_health: 0
+  f_health: 4
   f_maxHealth: 0
-  f_attackDmg: 0
-  f_attackSpeed: 0
-  f_moveSpeed: 0
-  s_name: noname
+  f_attackDmg: 1
+  f_attackSpeed: 1
+  f_moveSpeed: 1
+  s_name: Skeleton
   targets: []
   attackingTargets: []
   sm: {fileID: 0}

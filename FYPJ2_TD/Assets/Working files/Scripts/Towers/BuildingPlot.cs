@@ -9,10 +9,11 @@ public class BuildingPlot : Entity {
     
     [SerializeField] private float f_buildTimer;
     [SerializeField] private float f_lumberDur = 2, f_arrowDur = 2;
-    [SerializeField] private bool b_built;
+    [SerializeField] public bool b_built;
     private GameObject plotCanvas,buildCanvas;
     private Button plotButton;
     [SerializeField] GameObject archerPrefab;
+    [SerializeField] GameObject lumberPrefab;
 
     public enum BuildingType
     {
@@ -70,6 +71,12 @@ public class BuildingPlot : Entity {
                 {
                     case BuildingType.Lumberyard:
                         //instantiate a lumberyard at this plot's position
+                        if (lumberPrefab != null)
+                        {
+                            GameObject go = Instantiate(lumberPrefab, transform.position, transform.rotation);
+                            go.GetComponent<Lumberyard>().SetParentPlot(this);
+                            Debug.Log("built lumber house");
+                        }
                         Debug.Log("built lumberyard");
                         break;
                     case BuildingType.ArcherTower:
