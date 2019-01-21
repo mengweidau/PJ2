@@ -17,7 +17,7 @@ public class ManagerStats : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        globalLife = 3.0f;
+        globalLife = 10.0f;
         globalCurrency = 1000.0f;
         globalLumber = 200.0f;
 

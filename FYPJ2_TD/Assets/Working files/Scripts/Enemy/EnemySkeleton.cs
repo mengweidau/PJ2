@@ -16,7 +16,7 @@ public class EnemySkeleton : Entity
     private int numOfTargets = 1;
     private float health;
 
-    [SerializeField] ManagerStats managerStats;
+    [SerializeField] GameObject canvas;
 
     // Use this for initialization
     void Start()
@@ -38,7 +38,7 @@ public class EnemySkeleton : Entity
         sr = gameObject.GetComponentInChildren<SpriteRenderer>();
         anim = gameObject.GetComponentInChildren<Animator>();
         healthBar = gameObject.GetComponentInChildren<Image>();
-
+        canvas = GameObject.Find("Canvas");
     }
 
 
@@ -101,9 +101,9 @@ public class EnemySkeleton : Entity
         if (waypointIndex >= Waypoints.waypoints.Length - 1)
         {
             waypointIndex = 0;
-            managerStats.SetLife(managerStats.GetLife() - 1);
-            Destroy(gameObject);
+            canvas.GetComponent<ManagerStats>().SetLife(canvas.GetComponent<ManagerStats>().GetLife() - 1);
             Debug.Log("Enemy has escaped, health decreases!");
+            Destroy(gameObject);
         }
         waypointIndex++;
         targetWaypoint = Waypoints.waypoints[waypointIndex];
