@@ -17,6 +17,8 @@ public class EnemyTroll : Entity
     private int numOfTargets = 1;
     private float health;
 
+    [SerializeField] GameObject canvas;
+
     // Use this for initialization
     void Start()
     {
@@ -37,6 +39,7 @@ public class EnemyTroll : Entity
         sr = gameObject.GetComponentInChildren<SpriteRenderer>();
         anim = gameObject.GetComponentInChildren<Animator>();
         healthBar = gameObject.GetComponentInChildren<Image>();
+        canvas = GameObject.Find("Canvas");
     }
 
 
@@ -99,8 +102,9 @@ public class EnemyTroll : Entity
         if (waypointIndex >= Waypoints.waypoints.Length - 1)
         {
             waypointIndex = 0;
-            Destroy(gameObject);
+            canvas.GetComponent<ManagerStats>().SetLife(canvas.GetComponent<ManagerStats>().GetLife() - 2);
             Debug.Log("Enemy has escaped, health decreases!");
+            Destroy(gameObject);
         }
         waypointIndex++;
         targetWaypoint = Waypoints.waypoints[waypointIndex];
