@@ -13,55 +13,40 @@ public class FirebaseAuth : ScriptableObject
     Firebase.Auth.FirebaseAuth auth;
     Firebase.Auth.FirebaseUser firebaseUser;
     DatabaseReference mDatabaseRef;
-
-    public class User
+    DataSnapshot mSnapshot;
+    
+    public Firebase.Auth.FirebaseAuth Auth
     {
-        public string username;
-        public int val;
-
-        public User()
+        get
         {
-        }
+            if (auth == null)
+                InitializeFirebase();
 
-        public User(string _name, int _val)
-        {
-            this.username = _name;
-            this.val = _val;
+            return auth;
         }
     }
 
-
-    public Firebase.Auth.FirebaseAuth GetAuth()
+    public DatabaseReference Ref
     {
-        if (auth == null)
-            InitializeFirebase();
-
-        return auth;
-    }
-
-    public DatabaseReference GetReference()
-    {
-        if (mDatabaseRef == null)
+        get
         {
-            FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://fyp2-td.firebaseio.com/");
-            mDatabaseRef = FirebaseDatabase.DefaultInstance.RootReference;
+            if (mDatabaseRef == null)
+            {
+                FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://fyp2-td.firebaseio.com/");
+                mDatabaseRef = FirebaseDatabase.DefaultInstance.RootReference;
+            }
+            return mDatabaseRef;
         }
-        return mDatabaseRef;
     }
 
-    //public Firebase.Auth.FirebaseAuth Auth
-    //{
-    //    get
-    //    {
-    //        if (auth == null)
-    //        {
-    //            InitializeFirebase();
-    //        }
-
-    //        return auth;
-    //    }
-    //}
-
+    public DataSnapshot SnapShot
+    {
+        get
+        {
+            FetchSnapshot();
+            return mSnapshot;
+        }
+    }
 
     // Handle initialization of the necessary firebase modules:
     void InitializeFirebase()
@@ -75,14 +60,14 @@ public class FirebaseAuth : ScriptableObject
     // Track state changes of the auth object.
     void AuthStateChanged(object sender, System.EventArgs eventArgs)
     {
-        if (auth.CurrentUser != firebaseUser)
+        if (Auth.CurrentUser != firebaseUser)
         {
             bool signedIn = firebaseUser != auth.CurrentUser && auth.CurrentUser != null;
             if (!signedIn && firebaseUser != null)
             {
                 Debug.Log("Signed out " + firebaseUser.UserId);
             }
-            firebaseUser = auth.CurrentUser;
+            firebaseUser = Auth.CurrentUser;
             if (signedIn)
             {
                 Debug.Log("Signed in " + firebaseUser.UserId);
@@ -96,62 +81,134 @@ public class FirebaseAuth : ScriptableObject
         auth = null;
     }
     
-    public void writeNewUser(string _name, int _val)
+    public void WriteNewUser()
     {
-        if (firebaseUser == null || mDatabaseRef == null)
+        int defaultNum = 0;
+        if (firebaseUser == null || Ref == null)
             return;
 
-        User user = new User(_name, _val);
-        string json = JsonUtility.ToJson(user);
-        mDatabaseRef.Child("users").Child(firebaseUser.UserId).SetRawJsonValueAsync(json);
+        int numOfLvls = 2;
+        for (int i = 1; i < numOfLvls + 1; ++i)
+        {
+            Ref.Child("users").Child(firebaseUser.UserId).Child("Levels").Child("level"+i).SetValueAsync(defaultNum);
+            Ref.Child("users").Child(firebaseUser.UserId).Child("Levels").Child("stars" + i).SetValueAsync(defaultNum);
+        }
+        Ref.Child("users").Child(firebaseUser.UserId).Child("Currency").Child("gem").SetValueAsync(defaultNum);
     }
 
-    public void FetchUserData()
+    // Update level completed status for input level
+    public void UpdateLevelCleared(int _level, int _cleared)
     {
-        if (firebaseUser == null || mDatabaseRef == null)
+        if (firebaseUser == null || Ref == null)
+            return;
+        
+        Ref.Child("users").Child(firebaseUser.UserId).Child("Levels").Child("level" + _level).Child("cleared").SetValueAsync(_cleared);
+    }
+
+    // Update stars for input level
+    public void UpdateLevelStars(int _level, int _stars)
+    {
+        if (firebaseUser == null || Ref == null)
             return;
 
-        mDatabaseRef.Child("users").Child(firebaseUser.UserId).GetValueAsync().ContinueWith(task => 
+        Ref.Child("users").Child(firebaseUser.UserId).Child("Levels").Child("level" + _level).Child("stars").SetValueAsync(_stars);
+    }
+
+    // Update gems
+    public void UpdateGems(int _gem)
+    {
+        if (firebaseUser == null || Ref == null)
+            return;
+        
+        Ref.Child("users").Child(firebaseUser.UserId).Child("Currency").Child("gems").SetValueAsync(_gem);
+    }
+
+    public void FetchSnapshot()
+    {
+        Ref.Child("users").Child(firebaseUser.UserId).GetValueAsync().ContinueWith(task =>
         {
-          if (task.IsFaulted)
-          {
+            if (task.IsFaulted)
+            {
                 // Handle the error...
                 Debug.Log("task.IsFaulted");
             }
-          else if (task.IsCanceled)
-          {
+            else if (task.IsCanceled)
+            {
                 Debug.Log("task.IsCanceled");
-          }
-          else if (task.IsCompleted)
-          {
-              DataSnapshot snapshot = task.Result;
-                // Do something with snapshot...
-                Debug.Log("FOUND DATABASE");
-                Debug.Log("username: " + snapshot.Child("username").Value.ToString());
-                Debug.Log("val: " + snapshot.Child("val").Value.ToString());
-
-                /*
-                 * Dictionary<string, System.Object> datalist = (Dictionary<string, System.Object>)task.Result.Value;
-                // Do something with snapshot...
-                Debug.Log("FOUND DATABASE");
-                Debug.Log("username id : " + (string)datalist["username"]);
-                Debug.Log("val : " + System.Convert.ToUInt32( datalist["val"]));
-                //Debug.Log("username: " + snapshot.Child("username").Value.ToString());
-                //Debug.Log("val: " + snapshot.Child("val").Value.ToString());
-                 */
-
-                /*
-                 Debug.Log("FOUND DATABASE");
-                Debug.Log("username: " + snapshot.Child("username").Value.ToString());
-                Debug.Log("val: " + snapshot.Child("val").Value.ToString());
-
-                User user = JsonUtility.FromJson<User>(snapshot.Value.ToString());
-                Debug.Log("username: " + user.username);
-                Debug.Log("val: " + user.val);
-                 */
+            }
+            else if (task.IsCompleted)
+            {
+                mSnapshot = task.Result;
             }
         });
     }
+
+    // Fetch level completed status for input level
+    public bool FetchLevelCheck(int _level)
+    {
+        bool returnCheck = false;
+        
+        int check = System.Convert.ToInt32(SnapShot.Child("Levels").Child("level" + _level).Value);
+        if (check == 1)
+            returnCheck = true;
+
+        return returnCheck;
+    }
+
+    // Fetch number of stars for input level
+    public int FetchStars(int _level)
+    {
+        return System.Convert.ToInt32(SnapShot.Child("Levels").Child("stars"+_level).Value);
+    }
+
+    public int FetchGems()
+    {
+        return System.Convert.ToInt32(SnapShot.Child("Currency").Child("gem").Value);
+    }
+
+    //public void FetchUserData()
+    //{
+    //    Ref.Child("users").Child(firebaseUser.UserId).GetValueAsync().ContinueWith(task => 
+    //    {
+    //      if (task.IsFaulted)
+    //      {
+    //            // Handle the error...
+    //            Debug.Log("task.IsFaulted");
+    //        }
+    //      else if (task.IsCanceled)
+    //      {
+    //            Debug.Log("task.IsCanceled");
+    //      }
+    //      else if (task.IsCompleted)
+    //      {
+    //          DataSnapshot snapshot = task.Result;
+    //            // Do something with snapshot...
+    //            Debug.Log("FOUND DATABASE");
+    //            Debug.Log("level1: " + snapshot.Child("Levels").Child("level1").Value.ToString());
+    //            //Debug.Log("val: " + snapshot.Child("val").Value.ToString());
+
+    //            /*
+    //             * Dictionary<string, System.Object> datalist = (Dictionary<string, System.Object>)task.Result.Value;
+    //            // Do something with snapshot...
+    //            Debug.Log("FOUND DATABASE");
+    //            Debug.Log("username id : " + (string)datalist["username"]);
+    //            Debug.Log("val : " + System.Convert.ToUInt32( datalist["val"]));
+    //            //Debug.Log("username: " + snapshot.Child("username").Value.ToString());
+    //            //Debug.Log("val: " + snapshot.Child("val").Value.ToString());
+    //             */
+
+    //            /*
+    //             Debug.Log("FOUND DATABASE");
+    //            Debug.Log("username: " + snapshot.Child("username").Value.ToString());
+    //            Debug.Log("val: " + snapshot.Child("val").Value.ToString());
+
+    //            User user = JsonUtility.FromJson<User>(snapshot.Value.ToString());
+    //            Debug.Log("username: " + user.username);
+    //            Debug.Log("val: " + user.val);
+    //             */
+    //        }
+    //    });
+    //}
 
     public void CreateUser(string email, string password)
     {
@@ -159,7 +216,7 @@ public class FirebaseAuth : ScriptableObject
         //create user if valid email/password
         //prompt user to re-input textfields with proper requirements
 
-        GetAuth().CreateUserWithEmailAndPasswordAsync(email, password).ContinueWith(task => {
+        Auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWith(task => {
             if (task.IsCanceled)
             {
                 Debug.LogError("CreateUserWithEmailAndPasswordAsync was canceled.");
@@ -176,12 +233,13 @@ public class FirebaseAuth : ScriptableObject
             Debug.LogFormat("Firebase user created successfully: {0} ({1})",
                 newUser.DisplayName, newUser.UserId);
             firebaseUser = newUser;
+            WriteNewUser();
         });
     }
 
     public void SignInUser(string _email, string _password)
     {
-        auth.SignInWithEmailAndPasswordAsync(_email, _password).ContinueWith(task => {
+        Auth.SignInWithEmailAndPasswordAsync(_email, _password).ContinueWith(task => {
             if (task.IsCanceled)
             {
                 Debug.LogError("SignInWithEmailAndPasswordAsync was canceled.");

@@ -7,20 +7,7 @@ public class LoginSignup : MonoBehaviour {
     [SerializeField] TMP_InputField emailInput, passwordInput;
     [SerializeField] FirebaseAuth fbAuth;
 
-    // Use this for initialization
-    void Start () {
-        fbAuth.GetAuth();
-        fbAuth.GetReference();
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            Debug.Log("inputs check: \nEmailInput: " + emailInput.text + "\nPasswordInput: " + passwordInput.text);
-        }
-    }
-
+    
     public void Login()
     {
         if (emailInput.text.Length < 3)
