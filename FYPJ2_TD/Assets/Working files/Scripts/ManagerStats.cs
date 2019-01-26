@@ -7,7 +7,7 @@ public class ManagerStats : MonoBehaviour
 {
 
     public float globalLife;
-    public float globalCurrency;
+    public float globalGold;
     public float globalLumber;
 
     [SerializeField] TextMeshProUGUI m_textMeshLife;
@@ -18,8 +18,8 @@ public class ManagerStats : MonoBehaviour
     void Start()
     {
         globalLife = 10.0f;
-        globalCurrency = 1000.0f;
-        globalLumber = 200.0f;
+        globalGold = 500.0f;
+        globalLumber = 100.0f;
 
         m_textMeshLife = transform.Find("TMP Life").GetComponent<TextMeshProUGUI>();
         m_textMeshCurrency = transform.Find("TMP Gold").GetComponent<TextMeshProUGUI>();
@@ -30,7 +30,7 @@ public class ManagerStats : MonoBehaviour
     void Update()
     {
         m_textMeshLife.text = globalLife.ToString();
-        m_textMeshCurrency.text = globalCurrency.ToString();
+        m_textMeshCurrency.text = globalGold.ToString();
         m_textMeshLumber.text = globalLumber.ToString();
 
         if (globalLife <= 0)
@@ -48,4 +48,32 @@ public class ManagerStats : MonoBehaviour
         return globalLife;
     }
 
+    public void AddLumber(float lumber)
+    {
+        globalLumber += lumber;
+    }
+    public void MinusLumber(float lumber)
+    {
+        globalLumber -= lumber;
+    }
+
+    public float GetLumber()
+    {
+        return globalLumber;
+    }
+
+    public void AddGold(float gold)
+    {
+        globalGold += gold;
+    }
+
+    public void MinusGold(float gold)
+    {
+        globalGold -= gold;
+    }
+
+    public float GetGold()
+    {
+        return globalGold;
+    }
 }

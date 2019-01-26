@@ -94,7 +94,10 @@ public class EnemyTroll : Entity
         healthBar.fillAmount = GetHealth() / health;
 
         if (GetHealth() <= 0)
+        {
             Destroy(gameObject);
+            canvas.GetComponent<ManagerStats>().AddGold(200);
+        }
     }
 
     public void GetNextwaypoint()

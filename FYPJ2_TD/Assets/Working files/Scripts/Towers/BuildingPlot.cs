@@ -3,21 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BuildingPlot : Entity {
+public class BuildingPlot : Entity
+{
     //click on plot, toggle between showing build canvas
     //click on any button in build canvas - instantiates a building, setactive=false this plot
-    
+
     [SerializeField] private float f_buildTimer;
     [SerializeField] private float f_lumberDur = 2, f_arrowDur = 2;
     [SerializeField] public bool b_built;
-    private GameObject plotCanvas,buildCanvas;
+    private GameObject plotCanvas, buildCanvas;
     private Button plotButton;
     [SerializeField] GameObject archerPrefab;
     [SerializeField] GameObject lumberPrefab;
+    GameObject canvas;
 
     public enum BuildingType
     {
-        Plot= 0,
+        Plot = 0,
         Lumberyard,
         ArcherTower,
         FootmanTower,
@@ -38,21 +40,23 @@ public class BuildingPlot : Entity {
         //f_lumberDur = 4.0f;
         //f_arrowDur = 4.0f;
         b_built = false;
-        
+
         if (transform.Find("PlotCanvas"))
         {
             plotCanvas = transform.Find("PlotCanvas").gameObject;
             plotButton = plotCanvas.transform.Find("PlotButton").GetComponent<Button>();
         }
-            
+
         if (transform.Find("BuildCanvas"))
         {
             buildCanvas = transform.Find("BuildCanvas").gameObject;
             buildCanvas.SetActive(false);
         }
+        canvas = GameObject.Find("Canvas");
     }
 
-    private void Update () {
+    private void Update()
+    {
 
         Build();
     }
@@ -71,19 +75,22 @@ public class BuildingPlot : Entity {
                 {
                     case BuildingType.Lumberyard:
                         //instantiate a lumberyard at this plot's position
-                        if (lumberPrefab != null)
+                        if (lumberPrefab != null && canvas.GetComponent<ManagerStats>().GetGold() >= 200)
                         {
                             GameObject go = Instantiate(lumberPrefab, transform.position, transform.rotation);
                             go.GetComponent<Lumberyard>().SetParentPlot(this);
+                            canvas.GetComponent<ManagerStats>().MinusGold(200);
                             Debug.Log("built lumber house");
                         }
                         Debug.Log("built lumberyard");
                         break;
                     case BuildingType.ArcherTower:
-                        if (archerPrefab != null)
+                        if (archerPrefab != null && canvas.GetComponent<ManagerStats>().GetGold() >= 100 && canvas.GetComponent<ManagerStats>().GetLumber() >= 50)
                         {
                             GameObject go = Instantiate(archerPrefab, transform.position, transform.rotation);
                             go.GetComponent<ArcherTower>().SetParentPlot(this);
+                            canvas.GetComponent<ManagerStats>().MinusGold(100);
+                            canvas.GetComponent<ManagerStats>().MinusLumber(50);
                             Debug.Log("built archer tower");
                         }
                         break;
@@ -109,7 +116,7 @@ public class BuildingPlot : Entity {
     {
         buildingType = type;
     }
-    
+
     /*Buttons Funcs
      *description: funcs to be attached onto buttons 
      */
@@ -118,7 +125,7 @@ public class BuildingPlot : Entity {
         buildCanvas.SetActive(true);
         plotButton.interactable = false;
     }
-    
+
     public void CancelBuild()
     {
         buildCanvas.SetActive(false);

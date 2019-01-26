@@ -12,6 +12,7 @@ public class ArcherTower : Entity {
     [SerializeField] GameObject arrowPrefab;
     [SerializeField] GameObject towerCanvas, upgradeCanvas;
     private Button towerButton;
+    GameObject canvas;
 
     enum ArcherLevel
     {
@@ -43,6 +44,7 @@ public class ArcherTower : Entity {
             upgradeCanvas = transform.Find("UpgradeCanvas").gameObject;
             upgradeCanvas.SetActive(false);
         }
+        canvas = GameObject.Find("Canvas");
     }
 
     private void Update()
@@ -124,6 +126,7 @@ public class ArcherTower : Entity {
             parentPlot.PlotReturn();
         Destroy(gameObject);
         parentPlot.b_built = false;
+        canvas.GetComponent<ManagerStats>().AddLumber(25);
     }
 
     public void SelectedTower()

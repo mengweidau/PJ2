@@ -93,7 +93,10 @@ public class EnemySkeleton : Entity
         healthBar.fillAmount = GetHealth() / health;
 
         if (GetHealth() <= 0)
+        {
             Destroy(gameObject);
+            canvas.GetComponent<ManagerStats>().AddGold(100);
+        }
     }
 
     public void GetNextwaypoint()

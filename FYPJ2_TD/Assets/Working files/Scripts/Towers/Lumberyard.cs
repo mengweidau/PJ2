@@ -8,8 +8,9 @@ public class Lumberyard : Entity
     [SerializeField] private BuildingPlot parentPlot;
     [SerializeField] GameObject towerCanvas, upgradeCanvas;
     private Button towerButton;
-    [SerializeField] private float lumberCapacity;
+    //[SerializeField] private float lumberCapacity;
     private float generateTimer;
+    GameObject canvas;
 
     enum LumberyardLevel
     {
@@ -26,7 +27,7 @@ public class Lumberyard : Entity
 
     private void Awake()
     {
-        generateTimer = 5.0f;
+        generateTimer = 0.5f;
         if (transform.Find("LumberyardCanvas"))
         {
             towerCanvas = transform.Find("LumberyardCanvas").gameObject;
@@ -37,6 +38,7 @@ public class Lumberyard : Entity
             upgradeCanvas = transform.Find("UpgradeCanvas").gameObject;
             upgradeCanvas.SetActive(false);
         }
+        canvas = GameObject.Find("Canvas");
     }
 
     private void Update()
@@ -55,6 +57,7 @@ public class Lumberyard : Entity
             parentPlot.PlotReturn();
         Destroy(gameObject);
         parentPlot.b_built = false;
+        canvas.GetComponent<ManagerStats>().AddGold(100);
     }
 
     public void SelectedLumberyard()
@@ -74,8 +77,8 @@ public class Lumberyard : Entity
         generateTimer -= Time.deltaTime;
         if (generateTimer <= 0)
         {
-            lumberCapacity += 1;
-            generateTimer = 5.0f;
+            canvas.GetComponent<ManagerStats>().AddLumber(1);
+            generateTimer = 0.5f;
         }
     }
 }
