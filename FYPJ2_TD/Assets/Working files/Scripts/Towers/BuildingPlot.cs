@@ -75,22 +75,22 @@ public class BuildingPlot : Entity
                 {
                     case BuildingType.Lumberyard:
                         //instantiate a lumberyard at this plot's position
-                        if (lumberPrefab != null && canvas.GetComponent<ManagerStats>().GetGold() >= 200)
+                        if (lumberPrefab != null/* && canvas.GetComponent<ManagerStats>().GetGold() >= 200*/)
                         {
                             GameObject go = Instantiate(lumberPrefab, transform.position, transform.rotation);
                             go.GetComponent<Lumberyard>().SetParentPlot(this);
-                            canvas.GetComponent<ManagerStats>().MinusGold(200);
+                            //canvas.GetComponent<ManagerStats>().MinusGold(200);
                             Debug.Log("built lumber house");
                         }
                         Debug.Log("built lumberyard");
                         break;
                     case BuildingType.ArcherTower:
-                        if (archerPrefab != null && canvas.GetComponent<ManagerStats>().GetGold() >= 100 && canvas.GetComponent<ManagerStats>().GetLumber() >= 50)
+                        if (archerPrefab != null /*&& canvas.GetComponent<ManagerStats>().GetGold() >= 100 && canvas.GetComponent<ManagerStats>().GetLumber() >= 50*/)
                         {
                             GameObject go = Instantiate(archerPrefab, transform.position, transform.rotation);
                             go.GetComponent<ArcherTower>().SetParentPlot(this);
-                            canvas.GetComponent<ManagerStats>().MinusGold(100);
-                            canvas.GetComponent<ManagerStats>().MinusLumber(50);
+                            //canvas.GetComponent<ManagerStats>().MinusGold(100);
+                            //canvas.GetComponent<ManagerStats>().MinusLumber(50);
                             Debug.Log("built archer tower");
                         }
                         break;
