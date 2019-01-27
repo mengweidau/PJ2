@@ -80,6 +80,11 @@ public class FirebaseAuth : ScriptableObject
         auth.StateChanged -= AuthStateChanged;
         auth = null;
     }
+
+    public void SignoutUser()
+    {
+        auth.SignOut();
+    }
     
     public void WriteNewUser()
     {
@@ -90,8 +95,10 @@ public class FirebaseAuth : ScriptableObject
         int numOfLvls = 2;
         for (int i = 1; i < numOfLvls + 1; ++i)
         {
-            Ref.Child("users").Child(firebaseUser.UserId).Child("Levels").Child("level"+i).SetValueAsync(defaultNum);
-            Ref.Child("users").Child(firebaseUser.UserId).Child("Levels").Child("stars" + i).SetValueAsync(defaultNum);
+            //Ref.Child("users").Child(firebaseUser.UserId).Child("Levels").Child("level"+i).SetValueAsync(defaultNum);
+            Ref.Child("users").Child(firebaseUser.UserId).Child("Levels").Child("level" + i).Child("cleared").SetValueAsync(defaultNum);
+            //Ref.Child("users").Child(firebaseUser.UserId).Child("Levels").Child("stars" + i).SetValueAsync(defaultNum);
+            Ref.Child("users").Child(firebaseUser.UserId).Child("Levels").Child("level" + i).Child("stars").SetValueAsync(defaultNum);
         }
         Ref.Child("users").Child(firebaseUser.UserId).Child("Currency").Child("gem").SetValueAsync(defaultNum);
     }
@@ -148,7 +155,7 @@ public class FirebaseAuth : ScriptableObject
     {
         bool returnCheck = false;
         
-        int check = System.Convert.ToInt32(SnapShot.Child("Levels").Child("level" + _level).Value);
+        int check = System.Convert.ToInt32(SnapShot.Child("Levels").Child("level" + _level).Child("cleared").Value);
         if (check == 1)
             returnCheck = true;
 
@@ -158,7 +165,7 @@ public class FirebaseAuth : ScriptableObject
     // Fetch number of stars for input level
     public int FetchStars(int _level)
     {
-        return System.Convert.ToInt32(SnapShot.Child("Levels").Child("stars"+_level).Value);
+        return System.Convert.ToInt32(SnapShot.Child("Levels").Child("level" + _level).Child("stars").Value);
     }
 
     public int FetchGems()

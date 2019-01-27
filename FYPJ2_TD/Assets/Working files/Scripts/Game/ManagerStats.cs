@@ -4,8 +4,8 @@ using UnityEngine;
 using TMPro;
 
 /// <summary>
-/// Game Manager
-/// Description: determines health, gold, lumber, if game is won or lost
+/// ManagerStats
+/// Description: manages health, gold, lumber to be displayed and updated to ui 
 /// </summary>
 public class ManagerStats : MonoBehaviour
 {
@@ -16,6 +16,7 @@ public class ManagerStats : MonoBehaviour
     [SerializeField] int globalLife = 10;
     [SerializeField] int globalGold = 500;
     [SerializeField] int globalLumber = 100;
+    int currWave = 0;
     int totalWave = 0;
 
     //ugui can be assigned from inspector
@@ -41,17 +42,13 @@ public class ManagerStats : MonoBehaviour
         m_textMeshLumber.text = globalLumber.ToString();
         UpdateWaveText();
 
-        if (globalLife <= 0)
-        {
-            //Change to gameover scene
-        }
     }
 
     void UpdateWaveText()
     {
         if (spawnManager != null)
         {
-            int currWave = spawnManager.GetCurrentWave() + 1;
+            currWave = spawnManager.GetCurrentWave() + 1;
             m_textMeshWave.text = "Wave: " + currWave + " / " + totalWave;
         }
     }
@@ -64,10 +61,7 @@ public class ManagerStats : MonoBehaviour
         if (globalLife < 0) 
             globalLife = 0;
     }
-    public int GetLife()
-    {
-        return globalLife;
-    }
+    public int GetLife(){ return globalLife; }
 
     public void AddLumber(int lumber)
     {
@@ -86,10 +80,7 @@ public class ManagerStats : MonoBehaviour
             globalLumber = 0;
     }
 
-    public int GetLumber()
-    {
-        return globalLumber;
-    }
+    public int GetLumber(){ return globalLumber; }
 
     public void AddGold(int gold)
     {
@@ -109,8 +100,9 @@ public class ManagerStats : MonoBehaviour
             globalGold = 0;
     }
 
-    public int GetGold()
-    {
-        return globalGold;
-    }
+    public int GetGold(){ return globalGold; }
+
+    public int GetCurrWave(){ return currWave; }
+
+    public int GetTotalWave() { return totalWave; }
 }
