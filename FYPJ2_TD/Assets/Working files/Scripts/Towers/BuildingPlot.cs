@@ -5,17 +5,21 @@ using UnityEngine.UI;
 
 public class BuildingPlot : Entity
 {
-    //click on plot, toggle between showing build canvas
-    //click on any button in build canvas - instantiates a building, setactive=false this plot
-
     [SerializeField] private float f_buildTimer;
     [SerializeField] private float f_lumberDur = 2, f_arrowDur = 2;
+    [SerializeField] private int i_lumberyardGCost = 100;
+    [SerializeField] private int i_archerGCost = 150, i_archerLCost = 50;
     [SerializeField] public bool b_built;
-    private GameObject plotCanvas, buildCanvas;
-    private Button plotButton;
+    
+    //prefabs
     [SerializeField] GameObject archerPrefab;
     [SerializeField] GameObject lumberPrefab;
-    GameObject canvas;
+
+    //ui related
+    private GameObject plotCanvas, buildCanvas;
+    private Button plotButton;
+
+    [SerializeField] ManagerStats managerStats;
 
     public enum BuildingType
     {
@@ -37,22 +41,22 @@ public class BuildingPlot : Entity
     private void Awake()
     {
         f_buildTimer = 0.0f;
-        //f_lumberDur = 4.0f;
-        //f_arrowDur = 4.0f;
         b_built = false;
 
+        //initialize PlotCanvas from its child
         if (transform.Find("PlotCanvas"))
         {
             plotCanvas = transform.Find("PlotCanvas").gameObject;
             plotButton = plotCanvas.transform.Find("PlotButton").GetComponent<Button>();
         }
 
+        //initialize BuildCanvas from its child
         if (transform.Find("BuildCanvas"))
         {
             buildCanvas = transform.Find("BuildCanvas").gameObject;
             buildCanvas.SetActive(false);
         }
-        canvas = GameObject.Find("Canvas");
+        managerStats = GameObject.Find("Canvas").GetComponent<ManagerStats>();
     }
 
     private void Update()
@@ -74,23 +78,20 @@ public class BuildingPlot : Entity
                 switch (buildingType)
                 {
                     case BuildingType.Lumberyard:
-                        //instantiate a lumberyard at this plot's position
-                        if (lumberPrefab != null && canvas.GetComponent<ManagerStats>().GetGold() >= 200)
+                        if (lumberPrefab != null)
                         {
                             GameObject go = Instantiate(lumberPrefab, transform.position, transform.rotation);
                             go.GetComponent<Lumberyard>().SetParentPlot(this);
-                            canvas.GetComponent<ManagerStats>().MinusGold(200);
+                            
                             Debug.Log("built lumber house");
                         }
-                        Debug.Log("built lumberyard");
                         break;
                     case BuildingType.ArcherTower:
-                        if (archerPrefab != null && canvas.GetComponent<ManagerStats>().GetGold() >= 100 && canvas.GetComponent<ManagerStats>().GetLumber() >= 50)
+                        if (archerPrefab != null)
                         {
                             GameObject go = Instantiate(archerPrefab, transform.position, transform.rotation);
                             go.GetComponent<ArcherTower>().SetParentPlot(this);
-                            canvas.GetComponent<ManagerStats>().MinusGold(100);
-                            canvas.GetComponent<ManagerStats>().MinusLumber(50);
+                            
                             Debug.Log("built archer tower");
                         }
                         break;
@@ -134,22 +135,31 @@ public class BuildingPlot : Entity
 
     public void BuildLumberyard()
     {
-        if (!b_built)
+        if (!b_built && managerStats.GetGold() >= i_lumberyardGCost)
         {
             b_built = true;
             f_buildTimer = f_lumberDur;
             buildingType = BuildingType.Lumberyard;
-            //reduce resources from resource manager, 
+
+            //decrease amount of resources
+            managerStats.MinusGold(i_lumberyardGCost);
+
+            buildCanvas.SetActive(false);
         }
     }
     public void BuildArrowTower()
     {
-        if (!b_built)
+        if (!b_built && managerStats.GetGold() >= i_archerGCost && managerStats.GetLumber() >= i_archerLCost)
         {
             b_built = true;
             f_buildTimer = f_arrowDur;
             buildingType = BuildingType.ArcherTower;
-            //reduce resources from resource manager, 
+
+            //decrease amount of resources
+            managerStats.MinusGold(i_archerGCost);
+            managerStats.MinusLumber(i_archerLCost);
+            
+            buildCanvas.SetActive(false);
         }
     }
     public void BuildFootmanTower()
@@ -157,4 +167,10 @@ public class BuildingPlot : Entity
         //instantiate a footman tower at this position
         //make instantiated object know its parent, and when its destroy make it setactive=true its parent (its respective plot)
     }
+
+    public int GetLumberyardGCost() { return i_lumberyardGCost; }
+    
+    public int GetArrowtowerGCost() { return i_archerGCost; }
+
+    public int GetArrowtowerLCost() { return i_archerLCost; }
 }

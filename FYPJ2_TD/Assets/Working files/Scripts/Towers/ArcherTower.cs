@@ -121,12 +121,19 @@ public class ArcherTower : Entity {
 
     public void SellArcherTower()
     {
-        //increase (original cost of the tower * 0.85f)
-        if (parentPlot != null)
-            parentPlot.PlotReturn();
+        parentPlot.PlotReturn();
         Destroy(gameObject);
         parentPlot.b_built = false;
-        canvas.GetComponent<ManagerStats>().AddLumber(25);
+
+        //determine return value
+        int gold = parentPlot.GetArrowtowerGCost();
+        int wood = parentPlot.GetArrowtowerLCost();
+
+        gold = (int)(gold * 0.25f);
+        wood = (int)(wood * 0.25f);
+
+        canvas.GetComponent<ManagerStats>().AddGold(gold);
+        canvas.GetComponent<ManagerStats>().AddLumber(wood);
     }
 
     public void SelectedTower()

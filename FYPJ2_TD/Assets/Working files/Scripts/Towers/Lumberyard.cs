@@ -53,11 +53,15 @@ public class Lumberyard : Entity
 
     public void SellLumberyard()
     {
-        if (parentPlot != null)
-            parentPlot.PlotReturn();
+        parentPlot.PlotReturn();
         Destroy(gameObject);
         parentPlot.b_built = false;
-        canvas.GetComponent<ManagerStats>().AddGold(100);
+
+        //determine return value
+        int gold = parentPlot.GetLumberyardGCost();
+        gold = (int)(gold * 0.25f);
+
+        canvas.GetComponent<ManagerStats>().AddGold(gold);
     }
 
     public void SelectedLumberyard()
