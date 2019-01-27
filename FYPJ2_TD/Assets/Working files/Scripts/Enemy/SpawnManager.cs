@@ -117,4 +117,13 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+    public int GetCurrentWave()
+    {
+        return nextWave;
+    }
+
+    public int GetTotalWave()
+    {
+        return wave.Length;
+    }
 }

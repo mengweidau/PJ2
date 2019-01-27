@@ -3,27 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+/// <summary>
+/// Game Manager
+/// Description: determines health, gold, lumber, if game is won or lost
+/// </summary>
 public class ManagerStats : MonoBehaviour
 {
+    [SerializeField] SpawnManager spawnManager;
 
-    public float globalLife;
-    public float globalGold;
-    public float globalLumber;
+    //values can be changed under inspector 
+    //these are default values 
+    [SerializeField] int globalLife = 10;
+    [SerializeField] int globalGold = 500;
+    [SerializeField] int globalLumber = 100;
+    int totalWave = 0;
 
+    //ugui can be assigned from inspector
     [SerializeField] TextMeshProUGUI m_textMeshLife;
     [SerializeField] TextMeshProUGUI m_textMeshCurrency;
     [SerializeField] TextMeshProUGUI m_textMeshLumber;
+    [SerializeField] TextMeshProUGUI m_textMeshWave;
 
-    // Use this for initialization
-    void Start()
+    private void Start()
     {
-        globalLife = 10.0f;
-        globalGold = 500.0f;
-        globalLumber = 100.0f;
-
-        m_textMeshLife = transform.Find("TMP Life").GetComponent<TextMeshProUGUI>();
-        m_textMeshCurrency = transform.Find("TMP Gold").GetComponent<TextMeshProUGUI>();
-        m_textMeshLumber = transform.Find("TMP Lumber").GetComponent<TextMeshProUGUI>();
+        if (spawnManager == null)
+            m_textMeshWave.text = "no spawn manager assigned";
+        else
+            totalWave = spawnManager.GetTotalWave();
     }
 
     // Update is called once per frame
@@ -32,6 +38,8 @@ public class ManagerStats : MonoBehaviour
         m_textMeshLife.text = globalLife.ToString();
         m_textMeshCurrency.text = globalGold.ToString();
         m_textMeshLumber.text = globalLumber.ToString();
+        m_textMeshLumber.text = globalLumber.ToString();
+        UpdateWaveText();
 
         if (globalLife <= 0)
         {
@@ -39,40 +47,69 @@ public class ManagerStats : MonoBehaviour
         }
     }
 
-    public void SetLife(float life)
+    void UpdateWaveText()
+    {
+        if (spawnManager != null)
+        {
+            int currWave = spawnManager.GetCurrentWave() + 1;
+            m_textMeshWave.text = "Wave: " + currWave + " / " + totalWave;
+        }
+    }
+
+    public void SetLife(int life)
     {
         globalLife = life;
+
+        //avoid displaying negative values in gui
+        if (globalLife < 0) 
+            globalLife = 0;
     }
-    public float GetLife()
+    public int GetLife()
     {
         return globalLife;
     }
 
-    public void AddLumber(float lumber)
+    public void AddLumber(int lumber)
     {
         globalLumber += lumber;
+
+        //avoid unlimited value
+        if (globalLumber > 9999)
+            globalLumber = 9999;
     }
-    public void MinusLumber(float lumber)
+    public void MinusLumber(int lumber)
     {
         globalLumber -= lumber;
+
+        //avoid displaying negative values in gui
+        if (globalLumber < 0)
+            globalLumber = 0;
     }
 
-    public float GetLumber()
+    public int GetLumber()
     {
         return globalLumber;
     }
 
-    public void AddGold(float gold)
+    public void AddGold(int gold)
     {
         globalGold += gold;
+
+        //avoid unlimited value
+        if (globalGold > 9999)
+            globalGold = 9999;
     }
 
-    public void MinusGold(float gold)
+    public void MinusGold(int gold)
     {
         globalGold -= gold;
+
+        //avoid displaying negative values in gui
+        if (globalGold < 0)
+            globalGold = 0;
     }
 
-    public float GetGold()
+    public int GetGold()
     {
         return globalGold;
     }

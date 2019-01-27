@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class WorldBanner : MonoBehaviour {
     [SerializeField] FirebaseAuth fbAuth;
@@ -49,6 +50,15 @@ public class WorldBanner : MonoBehaviour {
             //check if previous level has been cleared
             if (fbAuth.FetchLevelCheck(lvl - 1))
                 gameObject.SetActive(true);
+        }
+    }
+
+    public void ToLevelBtn()
+    {
+        if (Application.CanStreamedLevelBeLoaded("Level" + lvl))
+        {
+            Debug.Log("going to level" + lvl);
+            SceneManager.LoadScene("Level" + lvl, LoadSceneMode.Single);
         }
     }
 }

@@ -29,7 +29,9 @@ public class CameraManager : MonoBehaviour {
     }
 	
 	void Update () {
+#if (UNITY_EDITOR)
         PcControls();
+#endif
 
 #if UNITY_ANDROID
         MobileCameraControls();
