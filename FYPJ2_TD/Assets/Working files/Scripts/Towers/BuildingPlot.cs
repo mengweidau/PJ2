@@ -82,7 +82,6 @@ public class BuildingPlot : Entity
                         {
                             GameObject go = Instantiate(lumberPrefab, transform.position, transform.rotation);
                             go.GetComponent<Lumberyard>().SetParentPlot(this);
-                            
                             Debug.Log("built lumber house");
                         }
                         break;
@@ -91,7 +90,6 @@ public class BuildingPlot : Entity
                         {
                             GameObject go = Instantiate(archerPrefab, transform.position, transform.rotation);
                             go.GetComponent<ArcherTower>().SetParentPlot(this);
-                            
                             Debug.Log("built archer tower");
                         }
                         break;
