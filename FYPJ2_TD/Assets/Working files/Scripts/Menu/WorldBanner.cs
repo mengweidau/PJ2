@@ -16,7 +16,10 @@ public class WorldBanner : MonoBehaviour {
         //set all stars to inactive
         for (int i = 0; i < 3; ++i)
             stars[i].SetActive(false);
+    }
 
+    private void Start()
+    {
         StartCoroutine(InitialiseBanner());
     }
 
@@ -24,7 +27,7 @@ public class WorldBanner : MonoBehaviour {
     public IEnumerator InitialiseBanner()
     {
         fbAuth.FetchSnapshot();
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(3.0f);
         collectedStars = fbAuth.FetchStars(lvl);
 
         SetStarsActive(collectedStars);

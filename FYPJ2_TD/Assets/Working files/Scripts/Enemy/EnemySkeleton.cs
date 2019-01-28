@@ -18,15 +18,15 @@ public class EnemySkeleton : Entity
 
     [SerializeField] GameObject canvas;
 
+    public EnemySkeleton()
+    {
+        s_name = "Skeleton";
+    }
+
     // Use this for initialization
     void Start()
     {
         targetWaypoint = Waypoints.waypoints[0];
-        s_name = "Skeleton";
-        f_health = 4.0f;
-        f_attackDmg = 1.0f;
-        f_attackSpeed = 1.0f;
-        f_moveSpeed = 1.0f;
 
         health = f_health;
 
@@ -47,7 +47,7 @@ public class EnemySkeleton : Entity
     {
         sm.Update();
         SetAttackingTarget();
-        print(sm.GetCurrentState());
+        //print(sm.GetCurrentState());
 
         if (targetWaypoint.transform.position.x < transform.position.x)
         {

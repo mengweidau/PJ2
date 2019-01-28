@@ -49,6 +49,7 @@ public class ArcherTower : Entity {
 
     private void Update()
     {
+        CheckNullTargets();
         DetermineShootingTargets();
         Shoot();
     }
@@ -149,5 +150,26 @@ public class ArcherTower : Entity {
     {
         upgradeCanvas.SetActive(false);
         towerButton.interactable = true;
+    }
+
+    void CheckNullTargets()
+    {
+        if (targets.Count > 0)
+        {
+            for (int i = 0; i < targets.Count; ++i)
+            {
+                if (targets[i] == null)
+                    targets.Remove(targets[i]);
+            }
+        }
+
+        if (attackingTargets.Count > 0)
+        {
+            for (int i = 0; i < attackingTargets.Count; ++i)
+            {
+                if (attackingTargets[i] == null)
+                    attackingTargets.Remove(attackingTargets[i]);
+            }
+        }
     }
 }

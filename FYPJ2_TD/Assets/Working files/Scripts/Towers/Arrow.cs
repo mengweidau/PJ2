@@ -42,6 +42,12 @@ public class Arrow : MonoBehaviour {
 
     public void SetArrowTarget(GameObject target)
     {
+        if (target == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         arrowTarget = target;
         arrowTargetTransform = target.transform;
         if (target.GetComponent<Entity>() && target != null)

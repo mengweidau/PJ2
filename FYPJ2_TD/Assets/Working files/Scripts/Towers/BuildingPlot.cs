@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class BuildingPlot : Entity
 {
@@ -19,6 +20,7 @@ public class BuildingPlot : Entity
     GameObject plotCanvas, buildCanvas, progressCanvas;
     Button plotButton;
     Slider progressSlider;
+    TextMeshProUGUI arw_goldText, arw_woodText, lyard_goldText;
 
 
     [SerializeField] ManagerStats managerStats;
@@ -42,32 +44,18 @@ public class BuildingPlot : Entity
 
     private void Awake()
     {
-        //initialize PlotCanvas from its child
-        if (transform.Find("PlotCanvas"))
-        {
-            plotCanvas = transform.Find("PlotCanvas").gameObject;
-            plotButton = plotCanvas.transform.Find("PlotButton").GetComponent<Button>();
-        }
-
-        //initialize BuildCanvas from its child
-        if (transform.Find("BuildCanvas"))
-        {
-            buildCanvas = transform.Find("BuildCanvas").gameObject;
-            buildCanvas.SetActive(false);
-        }
-
-        if (transform.Find("ProgressCanvas"))
-        {
-            progressCanvas = transform.Find("ProgressCanvas").gameObject;
-            progressSlider = progressCanvas.transform.Find("ProgressSlider").GetComponent<Slider>();
-            progressCanvas.SetActive(false);
-        }
+        InitCanvas();
+        InitTextGUI();
         managerStats = GameObject.Find("Canvas").GetComponent<ManagerStats>();
-
         
         f_buildTimer = 0.0f;
         f_buildDur = 0.0f;
         b_built = false;
+    }
+
+    private void Start()
+    {
+        InitCostText();
     }
 
     private void Update()
@@ -117,6 +105,44 @@ public class BuildingPlot : Entity
         gameObject.SetActive(false);
     }
 
+    private void InitCanvas()
+    {
+        if (transform.Find("PlotCanvas"))
+        {
+            plotCanvas = transform.Find("PlotCanvas").gameObject;
+            plotButton = plotCanvas.transform.Find("PlotButton").GetComponent<Button>();
+        }
+        
+        if (transform.Find("BuildCanvas"))
+        {
+            buildCanvas = transform.Find("BuildCanvas").gameObject;
+            buildCanvas.SetActive(false);
+        }
+
+        if (transform.Find("ProgressCanvas"))
+        {
+            progressCanvas = transform.Find("ProgressCanvas").gameObject;
+            progressSlider = progressCanvas.transform.Find("ProgressSlider").GetComponent<Slider>();
+            progressCanvas.SetActive(false);
+        }
+    }
+
+    private void InitTextGUI()
+    {
+        arw_goldText = buildCanvas.transform.Find("ArcherButton").transform.Find("goldText").GetComponent<TextMeshProUGUI>();
+        arw_woodText = buildCanvas.transform.Find("ArcherButton").transform.Find("woodText").GetComponent<TextMeshProUGUI>();
+
+        lyard_goldText = buildCanvas.transform.Find("LumberyardButton").transform.Find("goldText").GetComponent<TextMeshProUGUI>();
+    }
+
+    private void InitCostText()
+    {
+        arw_goldText.text = i_archerGCost.ToString();
+        arw_woodText.text = i_archerLCost.ToString();
+
+        lyard_goldText.text = i_lumberyardGCost.ToString();
+    }
+
     public void PlotReturn()
     {
         gameObject.SetActive(true);
@@ -129,7 +155,6 @@ public class BuildingPlot : Entity
     {
         buildingType = type;
     }
-
     
     public void SelectedPlotBtn()
     {

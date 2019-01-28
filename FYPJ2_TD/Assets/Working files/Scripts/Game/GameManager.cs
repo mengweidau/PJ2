@@ -8,6 +8,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] FirebaseAuth fbAuth;
     [SerializeField] ManagerStats managerStats;
     [SerializeField] int level;
+    [SerializeField] int stars;
+
+    private void Start()
+    {
+        StartCoroutine(InitStars());
+    }
 
     // Update is called once per frame
     void Update ()
@@ -16,14 +22,20 @@ public class GameManager : MonoBehaviour
         LoseCondition();
     }
 
+    public IEnumerator InitStars()
+    {
+        fbAuth.FetchSnapshot();
+        yield return new WaitForSeconds(2);
+        stars = fbAuth.FetchStars(level);
+    }
 
     void SetStars()
     {
-        if (managerStats.GetLife() >= 7)
+        if (managerStats.GetLife() >= 7 && stars < 3)
             fbAuth.UpdateLevelStars(level, 3);
-        else if (managerStats.GetLife() >= 4)
+        else if (managerStats.GetLife() >= 4 && stars < 2)
             fbAuth.UpdateLevelStars(level, 2);
-        else if (managerStats.GetLife() > 0)
+        else if (managerStats.GetLife() > 0 && stars <= 0)
             fbAuth.UpdateLevelStars(level, 1);
     }
 

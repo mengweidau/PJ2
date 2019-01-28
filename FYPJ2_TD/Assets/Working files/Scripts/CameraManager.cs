@@ -5,18 +5,13 @@ using UnityEngine;
 public class CameraManager : MonoBehaviour {
 
 
-    [SerializeField]
-    private float minPanX = -1.0f, maxPanX = 1.0f;
-    [SerializeField]
-    private float minPanY = -1.0f, maxPanY = 1.0f;
-    [SerializeField]
-    private float minPanZ = -1.0f, maxPanZ = 1.0f;
-    [SerializeField]
-    private float minZoom = 50.0f, maxZoom = 60.0f;
-    [SerializeField]
-    private float unityPanningSpeed = 1.0f;
+    [SerializeField] float minPanX = -1.0f, maxPanX = 1.0f;
+    [SerializeField] float minPanY = -1.0f, maxPanY = 1.0f;
+    [SerializeField] float minPanZ = -1.0f, maxPanZ = 1.0f;
+    [SerializeField] float maxZoom = 60.0f; //float minZoom = 50.0f, 
+    [SerializeField] float unityPanningSpeed = 1.0f;
     [SerializeField] float deltaMagnitudeDiff;
-    [SerializeField] private float mobileZoomSpeed = 1.0f;
+    [SerializeField] float mobileZoomSpeed = 1.0f;
 
     //mobile move variables
     public bool moved = false;

@@ -49,7 +49,7 @@ public class ManagerStats : MonoBehaviour
         if (spawnManager != null)
         {
             currWave = spawnManager.GetCurrentWave() + 1;
-            m_textMeshWave.text = "Wave: " + currWave + " / " + totalWave;
+            m_textMeshWave.text = "Wave: " + currWave + " / " + (totalWave - 1); //totalwave - 1, because spawnmanager has no end
         }
     }
 

@@ -19,15 +19,15 @@ public class EnemyTroll : Entity
 
     [SerializeField] GameObject canvas;
 
+    EnemyTroll()
+    {
+        s_name = "Troll";
+    }
+
     // Use this for initialization
     void Start()
     {
         targetWaypoint = Waypoints.waypoints[0];
-        s_name = "Troll";
-        f_health = 8.0f;
-        f_attackDmg = 2.0f;
-        f_attackSpeed = 0.5f;
-        f_moveSpeed = 0.5f;
 
         health = f_health;
 

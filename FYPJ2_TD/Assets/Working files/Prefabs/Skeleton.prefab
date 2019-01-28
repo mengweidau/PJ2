@@ -174,7 +174,7 @@ MonoBehaviour:
   f_maxHealth: 0
   f_attackDmg: 1
   f_attackSpeed: 1
-  f_moveSpeed: 1
+  f_moveSpeed: 0.65
   s_name: Skeleton
   targets: []
   attackingTargets: []
@@ -183,6 +183,7 @@ MonoBehaviour:
   sr: {fileID: 0}
   anim: {fileID: 0}
   healthBar: {fileID: 0}
+  canvas: {fileID: 0}
 --- !u!114 &114464438508329164
 MonoBehaviour:
   m_ObjectHideFlags: 1

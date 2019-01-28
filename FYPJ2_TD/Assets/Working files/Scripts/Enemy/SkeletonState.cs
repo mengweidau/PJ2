@@ -113,7 +113,7 @@ public class SkeletonAttack : State
             {
                 thisEnemy.GetAttackingTargets()[i].GetComponent<Entity>().SetHealth(thisEnemy.GetAttackingTargets()[i].GetComponent<Entity>().GetHealth() - thisEnemy.GetAttackDmg());
                 attackCooldown = 1.0f;
-                Debug.Log("Unit getting attacked");
+                //Debug.Log("Unit getting attacked");
             }
             if (Vector3.Distance(thisEnemy.transform.position, thisEnemy.GetAttackingTargets()[i].transform.position) > 1.0f)
             {
