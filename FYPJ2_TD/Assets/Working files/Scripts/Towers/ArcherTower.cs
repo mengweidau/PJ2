@@ -89,10 +89,11 @@ public class ArcherTower : Entity {
         {
             attackTimer += Time.deltaTime * 1.0f;
             //Debug.Log("archer shoot timer: " +attackTimer);
-            
+
             if (arrowPrefab != null && attackTimer > f_attackSpeed)
             {
                 //Debug.Log("shot");
+                AudioManager.instance.PlayShoot();
                 GameObject arrow = Instantiate(arrowPrefab, transform.position, Quaternion.identity);
                 arrow.GetComponent<Arrow>().SetParentTower(this);
                 arrow.GetComponent<Arrow>().SetArrowTarget(attackingTargets[0]);
