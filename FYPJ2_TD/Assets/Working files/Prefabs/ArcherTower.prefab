@@ -485,7 +485,7 @@ MonoBehaviour:
   f_health: 10
   f_maxHealth: 0
   f_attackDmg: 2
-  f_attackSpeed: 3
+  f_attackSpeed: 2
   f_moveSpeed: 0
   s_name: Archer Tower
   targets: []

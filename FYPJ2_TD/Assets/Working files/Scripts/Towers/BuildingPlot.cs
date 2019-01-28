@@ -5,19 +5,21 @@ using UnityEngine.UI;
 
 public class BuildingPlot : Entity
 {
-    [SerializeField] private float f_buildTimer;
-    [SerializeField] private float f_lumberDur = 2, f_arrowDur = 2;
-    [SerializeField] private int i_lumberyardGCost = 100;
-    [SerializeField] private int i_archerGCost = 150, i_archerLCost = 50;
-    [SerializeField] public bool b_built;
+    [SerializeField] int i_lumberyardGCost = 100;
+    [SerializeField] int i_archerGCost = 150, i_archerLCost = 50;
+    [SerializeField] float f_lumberDur = 2, f_arrowDur = 2;
+    float f_buildTimer, f_buildDur;
+    public bool b_built;
     
     //prefabs
     [SerializeField] GameObject archerPrefab;
     [SerializeField] GameObject lumberPrefab;
 
     //ui related
-    private GameObject plotCanvas, buildCanvas;
-    private Button plotButton;
+    GameObject plotCanvas, buildCanvas, progressCanvas;
+    Button plotButton;
+    Slider progressSlider;
+
 
     [SerializeField] ManagerStats managerStats;
 
@@ -40,9 +42,6 @@ public class BuildingPlot : Entity
 
     private void Awake()
     {
-        f_buildTimer = 0.0f;
-        b_built = false;
-
         //initialize PlotCanvas from its child
         if (transform.Find("PlotCanvas"))
         {
@@ -56,58 +55,73 @@ public class BuildingPlot : Entity
             buildCanvas = transform.Find("BuildCanvas").gameObject;
             buildCanvas.SetActive(false);
         }
+
+        if (transform.Find("ProgressCanvas"))
+        {
+            progressCanvas = transform.Find("ProgressCanvas").gameObject;
+            progressSlider = progressCanvas.transform.Find("ProgressSlider").GetComponent<Slider>();
+            progressCanvas.SetActive(false);
+        }
         managerStats = GameObject.Find("Canvas").GetComponent<ManagerStats>();
+
+        
+        f_buildTimer = 0.0f;
+        f_buildDur = 0.0f;
+        b_built = false;
     }
 
     private void Update()
     {
-
         Build();
     }
 
     private void Build()
     {
-        if (f_buildTimer > 0.0f)
+        if (f_buildDur > 0.0f)
         {
-            f_buildTimer -= 1.0f * Time.deltaTime;
-            //Debug.Log("building!: " + f_buildTimer);
-            //to add - building progress bar
+            f_buildTimer += 1.0f * Time.deltaTime;
+            progressSlider.value = CalculateProgress();
 
-            if (f_buildTimer <= 0.0f)
-            {
-                switch (buildingType)
-                {
-                    case BuildingType.Lumberyard:
-                        if (lumberPrefab != null)
-                        {
-                            GameObject go = Instantiate(lumberPrefab, transform.position, transform.rotation);
-                            go.GetComponent<Lumberyard>().SetParentPlot(this);
-                            Debug.Log("built lumber house");
-                        }
-                        break;
-                    case BuildingType.ArcherTower:
-                        if (archerPrefab != null)
-                        {
-                            GameObject go = Instantiate(archerPrefab, transform.position, transform.rotation);
-                            go.GetComponent<ArcherTower>().SetParentPlot(this);
-                            Debug.Log("built archer tower");
-                        }
-                        break;
-                    default:
-                        Debug.Log("no building type was built");
-                        break;
-                }
-
-                f_buildTimer = 0.0f;
-                gameObject.SetActive(false);
-            }
+            if (f_buildTimer >= f_buildDur)
+                DetermineBuild();
         }
+    }
+
+    void DetermineBuild()
+    {
+        switch (buildingType)
+        {
+            case BuildingType.Lumberyard:
+                if (lumberPrefab != null)
+                {
+                    GameObject go = Instantiate(lumberPrefab, transform.position, transform.rotation);
+                    go.GetComponent<Lumberyard>().SetParentPlot(this);
+                    Debug.Log("built lumber house");
+                }
+                break;
+            case BuildingType.ArcherTower:
+                if (archerPrefab != null)
+                {
+                    GameObject go = Instantiate(archerPrefab, transform.position, transform.rotation);
+                    go.GetComponent<ArcherTower>().SetParentPlot(this);
+                    Debug.Log("built archer tower");
+                }
+                break;
+            default:
+                Debug.Log("no building type was built");
+                break;
+        }
+
+        f_buildTimer = 0.0f;
+        f_buildDur = 0.0f;
+        gameObject.SetActive(false);
     }
 
     public void PlotReturn()
     {
         gameObject.SetActive(true);
         buildCanvas.SetActive(false);
+        progressCanvas.SetActive(false);
         plotButton.interactable = true;
     }
 
@@ -116,51 +130,59 @@ public class BuildingPlot : Entity
         buildingType = type;
     }
 
-    /*Buttons Funcs
-     *description: funcs to be attached onto buttons 
-     */
-    public void SelectedPlot()
+    
+    public void SelectedPlotBtn()
     {
         buildCanvas.SetActive(true);
         plotButton.interactable = false;
     }
 
-    public void CancelBuild()
+    public void CancelBuildBtn()
     {
         buildCanvas.SetActive(false);
         plotButton.interactable = true;
     }
 
-    public void BuildLumberyard()
+    public void BuildLumberyardBtn()
     {
         if (!b_built && managerStats.GetGold() >= i_lumberyardGCost)
         {
+            // set build type
             b_built = true;
-            f_buildTimer = f_lumberDur;
             buildingType = BuildingType.Lumberyard;
 
-            //decrease amount of resources
+            // set build duration
+            f_buildDur = f_lumberDur;
+            f_buildTimer = 0.0f;
+
+            // decrease amount of resources
             managerStats.MinusGold(i_lumberyardGCost);
 
             buildCanvas.SetActive(false);
+            progressCanvas.SetActive(true);
         }
     }
-    public void BuildArrowTower()
+    public void BuildArrowTowerBtn()
     {
         if (!b_built && managerStats.GetGold() >= i_archerGCost && managerStats.GetLumber() >= i_archerLCost)
         {
+            // set build type
             b_built = true;
-            f_buildTimer = f_arrowDur;
             buildingType = BuildingType.ArcherTower;
 
-            //decrease amount of resources
+            // set build duration
+            f_buildDur = f_arrowDur;
+            f_buildTimer = 0.0f;
+
+            // decrease amount of resources
             managerStats.MinusGold(i_archerGCost);
             managerStats.MinusLumber(i_archerLCost);
             
             buildCanvas.SetActive(false);
+            progressCanvas.SetActive(true);
         }
     }
-    public void BuildFootmanTower()
+    public void BuildFootmanTowerBtn()
     {
         //instantiate a footman tower at this position
         //make instantiated object know its parent, and when its destroy make it setactive=true its parent (its respective plot)
@@ -171,4 +193,6 @@ public class BuildingPlot : Entity
     public int GetArrowtowerGCost() { return i_archerGCost; }
 
     public int GetArrowtowerLCost() { return i_archerLCost; }
+
+    float CalculateProgress(){ return f_buildTimer / f_buildDur; }
 }
