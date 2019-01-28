@@ -5,13 +5,13 @@ using UnityEngine.UI;
 
 public class ArcherTower : Entity {
 
-    [SerializeField] private float attackTimer;
-    [SerializeField] private int numOfTargets;
+    [SerializeField] float attackTimer;
+    [SerializeField] int numOfTargets;
     //[SerializeField] private List<GameObject> shootingTargets;
-    [SerializeField] private BuildingPlot parentPlot;
+    [SerializeField] BuildingPlot parentPlot;
     [SerializeField] GameObject arrowPrefab;
     [SerializeField] GameObject towerCanvas, upgradeCanvas;
-    private Button towerButton;
+    Button towerButton;
     GameObject canvas;
 
     enum ArcherLevel
@@ -121,10 +121,6 @@ public class ArcherTower : Entity {
 
     public void SellArcherTower()
     {
-        parentPlot.PlotReturn();
-        Destroy(gameObject);
-        parentPlot.b_built = false;
-
         //determine return value
         int gold = parentPlot.GetArrowtowerGCost();
         int wood = parentPlot.GetArrowtowerLCost();
@@ -132,8 +128,14 @@ public class ArcherTower : Entity {
         gold = (int)(gold * 0.25f);
         wood = (int)(wood * 0.25f);
 
+        //return cost
         canvas.GetComponent<ManagerStats>().AddGold(gold);
         canvas.GetComponent<ManagerStats>().AddLumber(wood);
+
+        //destroy this tower
+        parentPlot.PlotReturn();
+        parentPlot.b_built = false;
+        Destroy(gameObject);
     }
 
     public void SelectedTower()

@@ -1735,13 +1735,11 @@ MonoBehaviour:
   s_name: Plot
   targets: []
   attackingTargets: []
-  f_buildTimer: 0
-  f_buildDur: 0
-  f_lumberDur: 2
-  f_arrowDur: 4
   i_lumberyardGCost: 100
   i_archerGCost: 150
   i_archerLCost: 50
+  f_lumberDur: 2
+  f_arrowDur: 4
   b_built: 0
   archerPrefab: {fileID: 1416718358519094, guid: 56b031a56b5018c489e7e0b9b1775a8e,
     type: 2}
@@ -2070,7 +2068,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
-  m_SortingLayerID: 0
+  m_SortingLayerID: -259415193
   m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!223 &223295974886147142
@@ -2090,8 +2088,8 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
-  m_SortingLayerID: 0
-  m_SortingOrder: 1
+  m_SortingLayerID: -259415193
+  m_SortingOrder: 2
   m_TargetDisplay: 0
 --- !u!223 &223971260207554000
 Canvas:
@@ -2110,8 +2108,8 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
-  m_SortingLayerID: -1869186337
-  m_SortingOrder: 1
+  m_SortingLayerID: -259415193
+  m_SortingOrder: 2
   m_TargetDisplay: 0
 --- !u!224 &224037374306351482
 RectTransform:
