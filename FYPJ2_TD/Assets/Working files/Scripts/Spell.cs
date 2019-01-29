@@ -12,7 +12,8 @@ public class Spell : MonoBehaviour
     public GameObject firePrefab;
     public GameObject freezePrefab;
     GameObject clone;
-    GameObject target;
+    GameObject targets;
+    [SerializeField] List<GameObject> target = new List<GameObject>();
 
     public bool spellFireSelect, spellFreezeSelect = false;
     bool fireSpellUsed, freezeSpellUsed = false;
@@ -33,12 +34,12 @@ public class Spell : MonoBehaviour
     void Update()
     {
 
-        if (spellFireSelect == true)
+        if (spellFireSelect && !fireSpellUsed)
             FireSpell();
-        if (spellFreezeSelect == true)
+        if (spellFreezeSelect && !freezeSpellUsed)
             FreezeSpell();
 
-        if (isFireCooldown == true)
+        if (isFireCooldown)
         {
             fireCoolDownimg.fillAmount += 1 / fireSpellcooldown * Time.deltaTime;
             if (fireCoolDownimg.fillAmount >= 1)
@@ -46,9 +47,10 @@ public class Spell : MonoBehaviour
                 fireCoolDownimg.fillAmount = 0;
                 isFireCooldown = false;
                 fireSpellUsed = false;
+                spellFireSelect = false;
             }
         }
-        if (isFreezeCooldown == true)
+        if (isFreezeCooldown)
         {
             freezeCoolDownimg.fillAmount += 1 / freezeSpellcooldown * Time.deltaTime;
             if (freezeCoolDownimg.fillAmount >= 1)
@@ -56,6 +58,7 @@ public class Spell : MonoBehaviour
                 freezeCoolDownimg.fillAmount = 0;
                 isFreezeCooldown = false;
                 freezeSpellUsed = false;
+                spellFreezeSelect = false;
             }
         }
 
@@ -64,17 +67,22 @@ public class Spell : MonoBehaviour
             freezeCd -= Time.deltaTime;
             if (freezeCd <= 0)
             {
-                if (target.name.Equals("Skeleton(Clone)"))
+                startFreeze = false;
+                freezeCd = 3;
+                for (int i = 0; i < target.Count; i++)
                 {
-                    startFreeze = false;
-                    freezeCd = 3;
-                    target.GetComponent<EnemySkeleton>().SetMoveSpeed(1);
-                }
-                else if (target.name.Equals("Troll(Clone)"))
-                {
-                    startFreeze = false;
-                    freezeCd = 3;
-                    target.GetComponent<EnemyTroll>().SetMoveSpeed(0.5f);
+                    if (target[i] == null)
+                        target.Remove(target[i]);
+                    else if (target[i].name.Equals("Skeleton(Clone)"))
+                    {
+                        target[i].GetComponent<EnemySkeleton>().SetMoveSpeed(0.65f);
+                        target.Remove(target[i]);
+                    }
+                    else if (target[i].name.Equals("Troll(Clone)"))
+                    {
+                        target[i].GetComponent<EnemyTroll>().SetMoveSpeed(0.5f);
+                        target.Remove(target[i]);
+                    }
                 }
             }
         }
@@ -83,80 +91,74 @@ public class Spell : MonoBehaviour
     #region FireSpell
     public void SummonFireSpell()
     {
+        Debug.Log("Fire spell button selected");
         spellFireSelect = true;
-        isFireCooldown = true;
     }
 
     void FireSpell()
     {
-        if (spellFireSelect == true && fireSpellUsed == false)
+        if (Input.GetMouseButtonDown(0))
         {
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.GetTouch(0).position), out hit))
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit))
             {
                 if (hit.collider.CompareTag("Enemy"))
                 {
-                    //Generate the spell
+                    isFireCooldown = true;
                     fireSpellUsed = true;
                     clone = Instantiate(firePrefab, hit.transform.position, Quaternion.identity);
-                    target = hit.transform.gameObject;
-                    //Decrease the full health value of the enemy, 1hitko
-                    if (target.name.Equals("Skeleton(Clone)"))
+                    targets = (hit.transform.gameObject);
+                    if (targets.name.Equals("Skeleton(Clone)"))
                     {
-                        target.GetComponent<EnemySkeleton>().DecreaseHealth(target.GetComponent<EnemySkeleton>().GetHealth());
+                        targets.GetComponent<EnemySkeleton>().DecreaseHealth(targets.GetComponent<EnemySkeleton>().GetHealth());
                     }
-                    else if (target.name.Equals("Troll(Clone)"))
+                    if (targets.name.Equals("Troll(Clone)"))
                     {
-                        target.GetComponent<EnemyTroll>().DecreaseHealth(target.GetComponent<EnemyTroll>().GetHealth());
+                        targets.GetComponent<EnemyTroll>().DecreaseHealth(targets.GetComponent<EnemyTroll>().GetHealth());
                     }
-                }
-                else
-                {
-                    fireSpellUsed = false;
                 }
             }
-            Destroy(clone, 1);
         }
+        Destroy(clone, 1);
     }
     #endregion
 
     #region FreezeSpell
     public void SummonFreezeSpell()
     {
+        Debug.Log("Freeze spell button selected");
         spellFreezeSelect = true;
-        isFreezeCooldown = true;
     }
 
     void FreezeSpell()
     {
-        if (spellFreezeSelect == true && freezeSpellUsed == false)
+        if (Input.GetMouseButtonDown(0))
         {
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.GetTouch(0).position), out hit))
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit))
             {
                 if (hit.collider.CompareTag("Enemy"))
                 {
-                    //Generate the spell
+                    isFreezeCooldown = true;
                     freezeSpellUsed = true;
+                    startFreeze = true;
                     clone = Instantiate(freezePrefab, hit.transform.position, Quaternion.identity);
-                    target = hit.transform.gameObject;
-                    //Decrease the full health value of the enemy, 1hitko
-                    if (target.name.Equals("Skeleton(Clone)"))
+                    target.Add(hit.transform.gameObject);
+                    for (int i = 0; i < target.Count; i++)
                     {
-                        startFreeze = true;
-                        target.GetComponent<EnemySkeleton>().SetMoveSpeed(0);
+                        if (target[i].name.Equals("Skeleton(Clone)"))
+                        {
+                            target[i].GetComponent<EnemySkeleton>().SetMoveSpeed(0);
+                        }
+                        else if (target[i].name.Equals("Troll(Clone)"))
+                        {
+                            target[i].GetComponent<EnemyTroll>().SetMoveSpeed(0);
+                        }
                     }
-                    else if (target.name.Equals("Troll(Clone)"))
-                    {
-                        startFreeze = true;
-                        target.GetComponent<EnemyTroll>().SetMoveSpeed(0);
-                    }
-                }
-                else
-                {
-                    freezeSpellUsed = false;
                 }
             }
-            Destroy(clone, 1);
         }
+        Destroy(clone, 1);
     }
     #endregion
 }
