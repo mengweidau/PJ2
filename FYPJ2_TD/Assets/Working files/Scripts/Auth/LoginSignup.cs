@@ -5,9 +5,25 @@ using TMPro;
 
 public class LoginSignup : MonoBehaviour {
     [SerializeField] TMP_InputField emailInput, passwordInput;
+    [SerializeField] TextMeshProUGUI popupText;
     [SerializeField] FirebaseAuth fbAuth;
 
-    
+    float popupTimer = 0.0f;
+    private void Start()
+    {
+        popupText.enabled = false;
+    }
+
+    private void Update()
+    {
+        if (popupTimer > 0.0f)
+        {
+            popupTimer -= 1 * Time.deltaTime;
+            if (popupTimer <= 0.0f)
+                popupText.enabled = false;
+        }
+    }
+
     public void Login()
     {
         if (emailInput.text.Length < 3)
