@@ -46,58 +46,41 @@ public class EnemyTroll : Entity
     // Update is called once per frame
     void Update()
     {
-        sm.Update();
-        SetAttackingTarget();
-        print(sm.GetCurrentState());
-
         if (targetWaypoint.transform.position.x < transform.position.x)
-        {
             sr.flipX = true;
-        }
         else
-        {
             sr.flipX = false;
-        }
 
-        for (int i = 0; i < numOfTargets; ++i)
+        for (int i = 0; i < GetAttackingTargets().Count; ++i)
         {
             if (sm.GetCurrentState() == "Attack")
             {
                 anim.SetBool("Attack", true);
                 if (GetAttackingTargets()[i].transform.position.x < transform.position.x)
-                {
                     sr.flipX = true;
-                }
                 else
-                {
                     sr.flipX = false;
-                }
             }
-            else if (sm.GetCurrentState() == "Chase")
+            if (sm.GetCurrentState() == "Chase")
             {
                 if (GetAttackingTargets()[i].transform.position.x < transform.position.x)
-                {
                     sr.flipX = true;
-                }
                 else
-                {
                     sr.flipX = false;
-                }
             }
             else
-            {
-                anim.SetBool("Chase", false);
                 anim.SetBool("Attack", false);
-            }
         }
 
         healthBar.fillAmount = GetHealth() / health;
 
         if (GetHealth() <= 0)
         {
-            Destroy(gameObject);
             canvas.GetComponent<ManagerStats>().AddGold(200);
+            Destroy(gameObject);
         }
+        SetAttackingTarget();
+        sm.Update();
     }
 
     public void GetNextwaypoint()

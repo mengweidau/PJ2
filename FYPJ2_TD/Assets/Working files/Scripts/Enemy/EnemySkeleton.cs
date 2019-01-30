@@ -45,58 +45,42 @@ public class EnemySkeleton : Entity
     // Update is called once per frame
     void Update()
     {
-        sm.Update();
-        SetAttackingTarget();
-        //print(sm.GetCurrentState());
-
         if (targetWaypoint.transform.position.x < transform.position.x)
-        {
             sr.flipX = true;
-        }
         else
-        {
             sr.flipX = false;
-        }
 
-        for (int i = 0; i < numOfTargets; ++i)
+        for (int i = 0; i < GetAttackingTargets().Count; ++i)
         {
-            if (sm.GetCurrentState() == "Attack")
+            if (sm.GetCurrentState() == "Chase" && GetAttackingTargets()[i] != null)
+            {
+                if (GetAttackingTargets()[i].transform.position.x < transform.position.x)
+                    sr.flipX = true;
+                else
+                    sr.flipX = false;
+            }
+            if (sm.GetCurrentState() == "Attack" && GetAttackingTargets()[i]!=null)
             {
                 anim.SetBool("Attack", true);
                 if (GetAttackingTargets()[i].transform.position.x < transform.position.x)
-                {
                     sr.flipX = true;
-                }
                 else
-                {
                     sr.flipX = false;
-                }
-            }
-            else if (sm.GetCurrentState() == "Chase")
-            {
-                if (GetAttackingTargets()[i].transform.position.x < transform.position.x)
-                {
-                    sr.flipX = true;
-                }
-                else
-                {
-                    sr.flipX = false;
-                }
             }
             else
-            {
-                anim.SetBool("Chase", false);
                 anim.SetBool("Attack", false);
-            }
         }
 
         healthBar.fillAmount = GetHealth() / health;
 
         if (GetHealth() <= 0)
         {
-            Destroy(gameObject);
             canvas.GetComponent<ManagerStats>().AddGold(100);
+            Destroy(gameObject);
         }
+
+        SetAttackingTarget();
+        sm.Update();
     }
 
     public void GetNextwaypoint()

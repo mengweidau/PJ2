@@ -96,22 +96,15 @@ public class SoldierAttack : State
     {
         for (int i = 0; i < thisSoldier.GetAttackingTargets().Count; i++)
         {
-            if (thisSoldier.GetTargets() != null || thisSoldier.GetAttackingTargets() != null)
+            attackCooldown -= Time.deltaTime;
+            if (attackCooldown <= 0)
             {
-                attackCooldown -= Time.deltaTime;
-                if (attackCooldown <= 0)
-                {
-                    thisSoldier.GetAttackingTargets()[i].GetComponent<Entity>().SetHealth(thisSoldier.GetAttackingTargets()[i].GetComponent<Entity>().GetHealth() - thisSoldier.GetAttackDmg());
-                    attackCooldown = 1.0f;
-                    //thisSoldier.GetTargets().Remove(thisSoldier.GetTargets()[i]);
-                    //thisSoldier.GetAttackingTargets().Remove(thisSoldier.GetAttackingTargets()[i]);
-                }
-                if (Vector3.Distance(thisSoldier.transform.position, thisSoldier.GetAttackingTargets()[i].transform.position) > 2.0f)
-                {
-                    thisSoldier.sm.SetNextState("Chase");
-                    //thisSoldier.GetTargets().Remove(thisSoldier.GetTargets()[i]);
-                    //thisSoldier.GetAttackingTargets().Remove(thisSoldier.GetAttackingTargets()[i]);
-                }
+                thisSoldier.GetAttackingTargets()[i].GetComponent<Entity>().SetHealth(thisSoldier.GetAttackingTargets()[i].GetComponent<Entity>().GetHealth() - thisSoldier.GetAttackDmg());
+                attackCooldown = 1.0f;
+            }
+            if (Vector3.Distance(thisSoldier.transform.position, thisSoldier.GetAttackingTargets()[i].transform.position) > 2.0f)
+            {
+                thisSoldier.sm.SetNextState("Chase");
             }
         }
     }

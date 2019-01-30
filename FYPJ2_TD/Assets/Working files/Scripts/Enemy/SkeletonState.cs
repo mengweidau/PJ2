@@ -14,27 +14,28 @@ public class SkeletonPatrol : State
 
     public override void Enter()
     {
-        //Debug.Log("Patrol");
+        Debug.Log("SkelePatrol");
         thisEnemy.SetMoveSpeed(1);
     }
 
     public override void Update()
     {
-        Vector3 direction = thisEnemy.targetWaypoint.position - thisEnemy.transform.position;
-
-        if (Vector3.Distance(thisEnemy.transform.position, thisEnemy.targetWaypoint.position) <= 0.1f)
+        Vector3 direction = (thisEnemy.targetWaypoint.position - thisEnemy.transform.position).normalized;
+        if (Vector3.Distance(thisEnemy.targetWaypoint.position, thisEnemy.transform.position) < 0.1f)
         {
+            Debug.Log("Finding next waypoint");
             thisEnemy.GetNextwaypoint();
         }
         else
         {
-            thisEnemy.transform.Translate(direction.normalized * thisEnemy.GetMoveSpeed() * Time.deltaTime);
+            thisEnemy.transform.Translate(direction * thisEnemy.GetMoveSpeed() * Time.deltaTime);
         }
 
         for (int i = 0; i < thisEnemy.GetAttackingTargets().Count; i++)
         {
-            if (Vector3.Distance(thisEnemy.transform.position, thisEnemy.GetAttackingTargets()[i].transform.position) <= 1.0f)
+            if (Vector3.Distance(thisEnemy.GetAttackingTargets()[i].transform.position, thisEnemy.transform.position) < 1.0f)
             {
+                Debug.Log("SkeleChase");
                 thisEnemy.sm.SetNextState("Chase");
             }
         }
@@ -58,7 +59,6 @@ public class SkeletonChase : State
 
     public override void Enter()
     {
-        //Debug.Log("Chase");
         thisEnemy.SetMoveSpeed(1);
     }
 
@@ -66,18 +66,24 @@ public class SkeletonChase : State
     {
         for (int i = 0; i < thisEnemy.GetAttackingTargets().Count; i++)
         {
-            if (Vector3.Distance(thisEnemy.transform.position, thisEnemy.GetAttackingTargets()[i].transform.position) > 1.0f)
+            if (thisEnemy.GetAttackingTargets()[i] != null)
             {
-                thisEnemy.sm.SetNextState("Patrol");
-            }
-            else if (Vector3.Distance(thisEnemy.transform.position, thisEnemy.GetAttackingTargets()[i].transform.position) < 0.2f)
-            {
-                thisEnemy.sm.SetNextState("Attack");
-            }
-            else
-            {
-                direction = thisEnemy.GetAttackingTargets()[i].transform.position - thisEnemy.transform.position;
-                thisEnemy.transform.Translate(direction.normalized * thisEnemy.GetMoveSpeed() * Time.deltaTime);
+                if (Vector3.Distance(thisEnemy.GetAttackingTargets()[i].transform.position, thisEnemy.transform.position) < 0.2f)
+                {
+                    Debug.Log("Close enought to attack");
+                    thisEnemy.sm.SetNextState("Attack");
+                }
+                else if (Vector3.Distance(thisEnemy.GetAttackingTargets()[i].transform.position, thisEnemy.transform.position) < 1.0f)
+                {
+                    Debug.Log("Chasing target");
+                    direction = (thisEnemy.GetAttackingTargets()[i].transform.position - thisEnemy.transform.position).normalized;
+                    thisEnemy.transform.Translate(direction * thisEnemy.GetMoveSpeed() * Time.deltaTime);
+                }
+                else
+                {
+                    Debug.Log("Target out of range, return to patrol");
+                    thisEnemy.sm.SetNextState("Patrol");
+                }
             }
         }
     }
@@ -100,7 +106,7 @@ public class SkeletonAttack : State
 
     public override void Enter()
     {
-        //Debug.Log("Attack");
+        Debug.Log("Attack");
         thisEnemy.SetMoveSpeed(0);
     }
 
@@ -113,10 +119,17 @@ public class SkeletonAttack : State
             {
                 thisEnemy.GetAttackingTargets()[i].GetComponent<Entity>().SetHealth(thisEnemy.GetAttackingTargets()[i].GetComponent<Entity>().GetHealth() - thisEnemy.GetAttackDmg());
                 attackCooldown = 1.0f;
-                //Debug.Log("Unit getting attacked");
             }
-            if (Vector3.Distance(thisEnemy.transform.position, thisEnemy.GetAttackingTargets()[i].transform.position) > 1.0f)
+            if (thisEnemy.GetAttackingTargets()[i].GetComponent<Entity>().GetHealth() <= 0)
             {
+                thisEnemy.GetAttackingTargets().Remove(thisEnemy.GetAttackingTargets()[i]);
+                thisEnemy.GetTargets().Remove(thisEnemy.GetTargets()[i]);
+                thisEnemy.sm.SetNextState("Patrol");
+                thisEnemy.anim.SetBool("Attack", false);
+            }
+            else if (Vector3.Distance(thisEnemy.GetAttackingTargets()[i].transform.position, thisEnemy.transform.position) > 1.0f)
+            {
+                Debug.Log("Target out of attack range, return to patrol");
                 thisEnemy.sm.SetNextState("Patrol");
             }
         }
@@ -126,3 +139,4 @@ public class SkeletonAttack : State
     {
     }
 }
+

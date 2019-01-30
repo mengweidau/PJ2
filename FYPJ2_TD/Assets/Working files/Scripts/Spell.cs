@@ -76,11 +76,13 @@ public class Spell : MonoBehaviour
                     else if (target[i].name.Equals("Skeleton(Clone)"))
                     {
                         target[i].GetComponent<EnemySkeleton>().SetMoveSpeed(0.65f);
+                        target[i].GetComponent<EnemySkeleton>().SetAttackDmg(1);
                         target.Remove(target[i]);
                     }
                     else if (target[i].name.Equals("Troll(Clone)"))
                     {
                         target[i].GetComponent<EnemyTroll>().SetMoveSpeed(0.5f);
+                        target[i].GetComponent<EnemyTroll>().SetAttackDmg(2);
                         target.Remove(target[i]);
                     }
                 }
@@ -149,10 +151,12 @@ public class Spell : MonoBehaviour
                         if (target[i].name.Equals("Skeleton(Clone)"))
                         {
                             target[i].GetComponent<EnemySkeleton>().SetMoveSpeed(0);
+                            target[i].GetComponent<EnemySkeleton>().SetAttackDmg(0);
                         }
                         else if (target[i].name.Equals("Troll(Clone)"))
                         {
                             target[i].GetComponent<EnemyTroll>().SetMoveSpeed(0);
+                            target[i].GetComponent<EnemyTroll>().SetAttackDmg(0);
                         }
                     }
                 }
