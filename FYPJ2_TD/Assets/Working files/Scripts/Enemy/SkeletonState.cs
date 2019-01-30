@@ -15,7 +15,7 @@ public class SkeletonPatrol : State
 
     public override void Enter()
     {
-        Debug.Log("SkelePatrol");
+        //Debug.Log("SkelePatrol");
         thisEnemy.SetMoveSpeed(1);
     }
 
@@ -49,7 +49,7 @@ public class SkeletonPatrol : State
         // if-reached curr waypoint, finds next waypoint | else-move towards curr waypoint
         if (Vector3.Distance(thisEnemy.targetWaypoint.position, thisEnemy.transform.position) < 0.1f)
         {
-            Debug.Log("Finding next waypoint");
+            //Debug.Log("Finding next waypoint");
             thisEnemy.GetNextwaypoint();
         }
         else
@@ -62,7 +62,7 @@ public class SkeletonPatrol : State
         {
             if (Vector3.Distance(thisEnemy.GetAttackingTargets()[i].transform.position, thisEnemy.transform.position) < 1.0f)
             {
-                Debug.Log("SkeleChase");
+                //Debug.Log("SkeleChase");
                 thisEnemy.sm.SetNextState("Chase");
             }
         }
@@ -120,18 +120,18 @@ public class SkeletonChase : State
             {
                 if (Vector3.Distance(thisEnemy.GetAttackingTargets()[i].transform.position, thisEnemy.transform.position) < 0.2f)
                 {
-                    Debug.Log("Close enought to attack");
+                    //Debug.Log("Close enough to attack");
                     thisEnemy.sm.SetNextState("Attack");
                 }
                 else if (Vector3.Distance(thisEnemy.GetAttackingTargets()[i].transform.position, thisEnemy.transform.position) < 1.0f)
                 {
-                    Debug.Log("Chasing target");
+                    //Debug.Log("Chasing target");
                     direction = (thisEnemy.GetAttackingTargets()[i].transform.position - thisEnemy.transform.position).normalized;
                     thisEnemy.transform.Translate(direction * thisEnemy.GetMoveSpeed() * Time.deltaTime);
                 }
                 else
                 {
-                    Debug.Log("Target out of range, return to patrol");
+                    //Debug.Log("Target out of range, return to patrol");
                     thisEnemy.sm.SetNextState("Patrol");
                 }
             }
@@ -177,7 +177,7 @@ public class SkeletonAttack : State
 
     public override void Enter()
     {
-        Debug.Log("Attack");
+        //Debug.Log("Attack");
         thisEnemy.SetMoveSpeed(0);
     }
 
@@ -204,7 +204,7 @@ public class SkeletonAttack : State
                 }
                 else if (Vector3.Distance(thisEnemy.GetAttackingTargets()[i].transform.position, thisEnemy.transform.position) > 1.0f)
                 {
-                    Debug.Log("Target out of attack range, return to patrol");
+                    //Debug.Log("Target out of attack range, return to patrol");
                     thisEnemy.sm.SetNextState("Patrol");
                 }
             }

@@ -68,7 +68,6 @@ public class MeleeTower : Entity
             progressSlider = progressCanvas.transform.Find("ProgressSlider").GetComponent<Slider>();
             progressCanvas.SetActive(true);
         }
-        
         if (transform.Find("MeleeTappingManager"))
         {
             tapScript = transform.Find("MeleeTappingManager").GetComponent<MeleeTowerTap>();
@@ -87,7 +86,6 @@ public class MeleeTower : Entity
             rallyPointImg = rallyPoint.transform.Find("RallypointCanvas").transform.Find("Image").GetComponent<Image>();
             rallyPointImg.color = new Color32(255, 255, 225, 0);
         }
-        
         canvas = GameObject.Find("Canvas"); //manager stats
     }
 
@@ -107,7 +105,7 @@ public class MeleeTower : Entity
             if (spawnTimer > spawnDur)
             {
                 GameObject go = Instantiate(soldierPrefab, rallyPoint.transform.position, Quaternion.identity);
-
+                go.GetComponent<Soldier>().SetParentTower(this);
                 //go's waypoint = rallypoint
                 soldierList.Add(go);
                 spawnTimer = 0.0f;
@@ -189,4 +187,7 @@ public class MeleeTower : Entity
     }
 
     float CalculateProgress() { return spawnTimer / spawnDur; }
+
+    public Vector3 SavedRallypoint()
+    { return rallyPoint.transform.position; }
 }

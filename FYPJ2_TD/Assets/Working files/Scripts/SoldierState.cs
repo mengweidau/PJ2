@@ -14,18 +14,23 @@ public class SoldierIdle : State
 
     public override void Enter()
     {
-        Debug.Log("idle");
+        Debug.Log("Idle");
     }
 
     public override void Update()
     {
         for (int i = 0; i < thisSoldier.GetAttackingTargets().Count; i++)
         {
-            if (Vector3.Distance(thisSoldier.transform.position, thisSoldier.GetAttackingTargets()[i].transform.position) < 1.0f)
+            if (Vector3.Distance(thisSoldier.GetAttackingTargets()[i].transform.position, thisSoldier.transform.position) < 1.0f)
             {
                 thisSoldier.sm.SetNextState("Chase");
             }
+            //else if (Vector3.Distance(thisSoldier.GetAttackingTargets()[i].transform.position, thisSoldier.transform.position) > 1.0f)
+            //{
+            //    thisSoldier.transform.Translate(thisSoldier.parentTower.SavedRallypoint() * thisSoldier.GetMoveSpeed() * Time.deltaTime);
+            //}
         }
+
     }
 
     public override void Exit()
@@ -54,18 +59,19 @@ public class SoldierChase : State
     {
         for (int i = 0; i < thisSoldier.GetAttackingTargets().Count; i++)
         {
-            if (Vector3.Distance(thisSoldier.transform.position, thisSoldier.GetAttackingTargets()[i].transform.position) > 2.0f)
-            {
-                thisSoldier.sm.SetNextState("Idle");
-            }
-            else if (Vector3.Distance(thisSoldier.transform.position, thisSoldier.GetAttackingTargets()[i].transform.position) < 0.2f)
+
+            if (Vector3.Distance(thisSoldier.GetAttackingTargets()[i].transform.position, thisSoldier.transform.position) < 0.2f)
             {
                 thisSoldier.sm.SetNextState("Attack");
             }
+            else if (Vector3.Distance(thisSoldier.GetAttackingTargets()[i].transform.position, thisSoldier.transform.position) < 1.0f)
+            {
+                direction = (thisSoldier.GetAttackingTargets()[i].transform.position - thisSoldier.transform.position).normalized;
+                thisSoldier.transform.Translate(direction * thisSoldier.GetMoveSpeed() * Time.deltaTime);
+            }
             else
             {
-                direction = thisSoldier.GetAttackingTargets()[i].transform.position - thisSoldier.transform.position;
-                thisSoldier.transform.Translate(direction.normalized * thisSoldier.GetMoveSpeed() * Time.deltaTime);
+                thisSoldier.sm.SetNextState("Idle");
             }
         }
     }
@@ -90,6 +96,7 @@ public class SoldierAttack : State
     public override void Enter()
     {
         Debug.Log("SAttack");
+        thisSoldier.SetMoveSpeed(0);
     }
 
     public override void Update()
@@ -102,9 +109,15 @@ public class SoldierAttack : State
                 thisSoldier.GetAttackingTargets()[i].GetComponent<Entity>().SetHealth(thisSoldier.GetAttackingTargets()[i].GetComponent<Entity>().GetHealth() - thisSoldier.GetAttackDmg());
                 attackCooldown = 1.0f;
             }
-            if (Vector3.Distance(thisSoldier.transform.position, thisSoldier.GetAttackingTargets()[i].transform.position) > 2.0f)
+            if (thisSoldier.GetAttackingTargets()[i].GetComponent<Entity>().GetHealth() <= 0)
             {
-                thisSoldier.sm.SetNextState("Chase");
+                thisSoldier.GetAttackingTargets().Remove(thisSoldier.GetAttackingTargets()[i]);
+                thisSoldier.GetTargets().Remove(thisSoldier.GetTargets()[i]);
+                thisSoldier.sm.SetNextState("Idle");
+            }
+            else if (Vector3.Distance(thisSoldier.GetAttackingTargets()[i].transform.position, thisSoldier.transform.position) > 1.0f)
+            {
+                thisSoldier.sm.SetNextState("Idle");
             }
         }
     }

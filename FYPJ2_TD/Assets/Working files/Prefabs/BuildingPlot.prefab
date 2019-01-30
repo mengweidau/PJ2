@@ -388,7 +388,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1986604230472988
 GameObject:
   m_ObjectHideFlags: 1
@@ -413,7 +413,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1661955272182624}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.81, y: -5, z: -0.43}
+  m_LocalPosition: {x: -1.7826481, y: -2.16334, z: -2.5071237}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224174403342357234}
@@ -1662,8 +1662,8 @@ MonoBehaviour:
     type: 2}
   lumberPrefab: {fileID: 1251329677299746, guid: 74f433b13280ec042847b81d662dca6c,
     type: 2}
-  meleePrefab: {fileID: 0}
-  managerStats: {fileID: 0}
+  meleePrefab: {fileID: 1797823462862798, guid: 6c6e33a94a8aa4d4b86a90aa9750be8c,
+    type: 2}
 --- !u!114 &114942877405439770
 MonoBehaviour:
   m_ObjectHideFlags: 1

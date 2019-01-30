@@ -37,7 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4010209921907828}
   - component: {fileID: 136329675802049080}
-  - component: {fileID: 114792722799197432}
+  - component: {fileID: 114203735930733908}
   m_Layer: 0
   m_Name: TestFakeUnit
   m_TagString: Player
@@ -52,7 +52,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1694410449617284}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.67, y: -5, z: -1.16}
+  m_LocalPosition: {x: -0.56, y: -5, z: -0.92}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4535605603225260}
@@ -90,7 +90,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114792722799197432
+--- !u!114 &114203735930733908
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -110,6 +110,9 @@ MonoBehaviour:
   targets: []
   attackingTargets: []
   sm: {fileID: 0}
+  sr: {fileID: 0}
+  parentTower: {fileID: 0}
+  currentState: 
 --- !u!136 &136329675802049080
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -119,8 +122,8 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
+  m_Radius: 0.8
+  m_Height: 0.8
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!212 &212639858496080252

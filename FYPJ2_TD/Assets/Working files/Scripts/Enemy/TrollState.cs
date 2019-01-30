@@ -14,7 +14,6 @@ public class TrollPatrol : State
 
     public override void Enter()
     {
-        Debug.Log("TrollPatrol");
         thisEnemy.SetMoveSpeed(0.5f);
     }
 
@@ -22,20 +21,20 @@ public class TrollPatrol : State
     {
         Vector3 direction = (thisEnemy.targetWaypoint.position - thisEnemy.transform.position).normalized;
         if (Vector3.Distance(thisEnemy.transform.position, thisEnemy.targetWaypoint.position) < 0.1f)
+        
+        if (Vector3.Distance(thisEnemy.targetWaypoint.position, thisEnemy.transform.position) < 0.1f)
         {
-            Debug.Log("Finding next waypoint");
             thisEnemy.GetNextwaypoint();
         }
         else
         {
             thisEnemy.transform.Translate(direction * thisEnemy.GetMoveSpeed() * Time.deltaTime);
         }
-
+        
         for (int i = 0; i < thisEnemy.GetAttackingTargets().Count; i++)
         {
             if (Vector3.Distance(thisEnemy.GetAttackingTargets()[i].transform.position, thisEnemy.transform.position) < 1.0f)
             {
-                Debug.Log("TrollChase");
                 thisEnemy.sm.SetNextState("Chase");
             }
         }
@@ -66,20 +65,21 @@ public class TrollChase : State
     {
         for (int i = 0; i < thisEnemy.GetAttackingTargets().Count; i++)
         {
-            if (Vector3.Distance(thisEnemy.GetAttackingTargets()[i].transform.position, thisEnemy.transform.position) < 0.2f)
+            if (thisEnemy.GetAttackingTargets()[i] != null)
             {
-                thisEnemy.sm.SetNextState("Attack");
-            }
-            else if (Vector3.Distance(thisEnemy.GetAttackingTargets()[i].transform.position, thisEnemy.transform.position) < 1.0f)
-            {
-                Debug.Log("Chasing target");
-                direction = (thisEnemy.GetAttackingTargets()[i].transform.position - thisEnemy.transform.position).normalized;
-                thisEnemy.transform.Translate(direction * thisEnemy.GetMoveSpeed() * Time.deltaTime);
-            }
-            else
-            {
-                Debug.Log("Target out of range, return to patrol");
-                thisEnemy.sm.SetNextState("Patrol");
+                if (Vector3.Distance(thisEnemy.GetAttackingTargets()[i].transform.position, thisEnemy.transform.position) < 0.2f)
+                {
+                    thisEnemy.sm.SetNextState("Attack");
+                }
+                else if (Vector3.Distance(thisEnemy.GetAttackingTargets()[i].transform.position, thisEnemy.transform.position) < 1.0f)
+                {
+                    direction = (thisEnemy.GetAttackingTargets()[i].transform.position - thisEnemy.transform.position).normalized;
+                    thisEnemy.transform.Translate(direction * thisEnemy.GetMoveSpeed() * Time.deltaTime);
+                }
+                else
+                {
+                    thisEnemy.sm.SetNextState("Patrol");
+                }
             }
         }
     }
@@ -93,6 +93,7 @@ public class TrollAttack : State
 {
     EnemyTroll thisEnemy;
     float attackCooldown = 0.5f;
+    List<GameObject> clearList = new List<GameObject>();
 
     public TrollAttack(string stateID, EnemyTroll enemy)
     {
@@ -102,36 +103,40 @@ public class TrollAttack : State
 
     public override void Enter()
     {
-        Debug.Log("Attack");
         thisEnemy.SetMoveSpeed(0);
     }
 
     public override void Update()
     {
-        for (int i = 0; i < thisEnemy.GetAttackingTargets().Count; i++)
+        if (thisEnemy.GetAttackingTargets().Count > 0)
         {
-            attackCooldown -= Time.deltaTime;
-            if (attackCooldown <= 0)
+            for (int i = 0; i < thisEnemy.GetAttackingTargets().Count; i++)
             {
-                thisEnemy.GetAttackingTargets()[i].GetComponent<Entity>().SetHealth(thisEnemy.GetAttackingTargets()[i].GetComponent<Entity>().GetHealth() - thisEnemy.GetAttackDmg());
-                attackCooldown = 1.0f;
-                Debug.Log("Unit getting attacked");
-            }
-            if (thisEnemy.GetAttackingTargets()[i].GetComponent<Entity>().GetHealth() <= 0)
-            {
-                thisEnemy.GetAttackingTargets().Remove(thisEnemy.GetAttackingTargets()[i]);
-                thisEnemy.GetTargets().Remove(thisEnemy.GetTargets()[i]);
-                thisEnemy.sm.SetNextState("Patrol");
-                thisEnemy.anim.SetBool("Attack", false);
-            }
-            else if (Vector3.Distance(thisEnemy.transform.position, thisEnemy.GetAttackingTargets()[i].transform.position) > 1.0f)
-            {
-                thisEnemy.sm.SetNextState("Patrol");
+                attackCooldown -= Time.deltaTime;
+                if (attackCooldown <= 0)
+                {
+                    thisEnemy.GetAttackingTargets()[i].GetComponent<Entity>().SetHealth(thisEnemy.GetAttackingTargets()[i].GetComponent<Entity>().GetHealth() - thisEnemy.GetAttackDmg());
+                    attackCooldown = 1.0f;
+                }
+                if (thisEnemy.GetAttackingTargets()[i].GetComponent<Entity>().GetHealth() <= 0)
+                {
+                    thisEnemy.GetAttackingTargets().Remove(thisEnemy.GetAttackingTargets()[i]);
+                    thisEnemy.GetTargets().Remove(thisEnemy.GetTargets()[i]);
+                    thisEnemy.sm.SetNextState("Patrol");
+                    thisEnemy.anim.SetBool("Attack", false);
+                }
+                else if (Vector3.Distance(thisEnemy.GetAttackingTargets()[i].transform.position, thisEnemy.transform.position) > 1.0f)
+                {
+                    thisEnemy.sm.SetNextState("Patrol");
+                }
             }
         }
+        else
+            thisEnemy.sm.SetNextState("Patrol");
     }
 
     public override void Exit()
     {
     }
 }
+

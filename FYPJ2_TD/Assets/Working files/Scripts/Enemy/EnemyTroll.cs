@@ -53,7 +53,7 @@ public class EnemyTroll : Entity
 
         for (int i = 0; i < GetAttackingTargets().Count; ++i)
         {
-            if (sm.GetCurrentState() == "Attack")
+            if (sm.GetCurrentState() == "Attack" && GetAttackingTargets()[i] != null)
             {
                 anim.SetBool("Attack", true);
                 if (GetAttackingTargets()[i].transform.position.x < transform.position.x)
@@ -61,7 +61,7 @@ public class EnemyTroll : Entity
                 else
                     sr.flipX = false;
             }
-            if (sm.GetCurrentState() == "Chase")
+            if (sm.GetCurrentState() == "Chase" && GetAttackingTargets()[i] != null)
             {
                 if (GetAttackingTargets()[i].transform.position.x < transform.position.x)
                     sr.flipX = true;

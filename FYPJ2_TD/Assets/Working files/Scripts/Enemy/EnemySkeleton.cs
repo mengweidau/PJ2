@@ -49,7 +49,6 @@ public class EnemySkeleton : Entity
     {
         currentState = sm.GetCurrentState();
 
-
         if (targetWaypoint.transform.position.x < transform.position.x)
             sr.flipX = true;
         else
