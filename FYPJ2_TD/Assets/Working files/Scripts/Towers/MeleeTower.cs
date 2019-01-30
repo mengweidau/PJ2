@@ -135,6 +135,12 @@ public class MeleeTower : Entity
         canvas.GetComponent<ManagerStats>().AddGold(gold);
         canvas.GetComponent<ManagerStats>().AddLumber(wood);
 
+        //destroy this tower's soldiers
+        for (int i = 0; i < soldierList.Count; ++i)
+        {
+            Destroy(soldierList[i]);
+        }
+
         //destroy this tower
         parentPlot.PlotReturn();
         parentPlot.b_built = false;

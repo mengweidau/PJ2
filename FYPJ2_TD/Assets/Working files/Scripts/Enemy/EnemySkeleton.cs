@@ -15,8 +15,10 @@ public class EnemySkeleton : Entity
     private int waypointIndex = 0;
     private int numOfTargets = 1;
     private float health;
-
+    
     [SerializeField] GameObject canvas;
+
+    [SerializeField] string currentState = "";
 
     public EnemySkeleton()
     {
@@ -45,6 +47,9 @@ public class EnemySkeleton : Entity
     // Update is called once per frame
     void Update()
     {
+        currentState = sm.GetCurrentState();
+
+
         if (targetWaypoint.transform.position.x < transform.position.x)
             sr.flipX = true;
         else

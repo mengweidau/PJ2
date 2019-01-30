@@ -6,24 +6,25 @@ using TMPro;
 
 public class BuildingPlot : Entity
 {
-    [SerializeField] int i_lumberyardGCost = 100;
-    [SerializeField] int i_archerGCost = 150, i_archerLCost = 50;
-    [SerializeField] float f_lumberDur = 2, f_arrowDur = 2;
-    float f_buildTimer, f_buildDur;
+    [SerializeField] int lumyard_GCost = 100;
+    [SerializeField] int archer_GCost = 150, archer_LCost = 50;
+    [SerializeField] int melee_GCost = 150, melee_LCost = 100;
+    [SerializeField] float lumber_BuildDur = 2.0f, arrow_BuildDur = 2.0f, melee_BuildDur = 2.0f;
+    float buildTimer, buildDur;
     public bool b_built;
     
     //prefabs
     [SerializeField] GameObject archerPrefab;
     [SerializeField] GameObject lumberPrefab;
+    [SerializeField] GameObject meleePrefab;
 
     //ui related
     GameObject plotCanvas, buildCanvas, progressCanvas;
     Button plotButton;
     Slider progressSlider;
-    TextMeshProUGUI arw_goldText, arw_woodText, lyard_goldText;
-
-
-    [SerializeField] ManagerStats managerStats;
+    TextMeshProUGUI arw_goldText, arw_woodText, mle_goldText, mle_woodText, lyard_goldText;
+    
+    ManagerStats managerStats;
 
     public enum BuildingType
     {
@@ -48,8 +49,8 @@ public class BuildingPlot : Entity
         InitTextGUI();
         managerStats = GameObject.Find("Canvas").GetComponent<ManagerStats>();
         
-        f_buildTimer = 0.0f;
-        f_buildDur = 0.0f;
+        buildTimer = 0.0f;
+        buildDur = 0.0f;
         b_built = false;
     }
 
@@ -65,12 +66,12 @@ public class BuildingPlot : Entity
 
     private void Build()
     {
-        if (f_buildDur > 0.0f)
+        if (buildDur > 0.0f)
         {
-            f_buildTimer += 1.0f * Time.deltaTime;
+            buildTimer += 1.0f * Time.deltaTime;
             progressSlider.value = CalculateProgress();
 
-            if (f_buildTimer >= f_buildDur)
+            if (buildTimer >= buildDur)
                 DetermineBuild();
         }
     }
@@ -95,13 +96,21 @@ public class BuildingPlot : Entity
                     Debug.Log("built archer tower");
                 }
                 break;
+            case BuildingType.FootmanTower:
+                if (meleePrefab != null)
+                {
+                    GameObject go = Instantiate(meleePrefab, transform.position, transform.rotation);
+                    go.GetComponent<MeleeTower>().SetParentPlot(this);
+                    Debug.Log("built melee tower");
+                }
+                break;
             default:
                 Debug.Log("no building type was built");
                 break;
         }
 
-        f_buildTimer = 0.0f;
-        f_buildDur = 0.0f;
+        buildTimer = 0.0f;
+        buildDur = 0.0f;
         gameObject.SetActive(false);
     }
 
@@ -132,15 +141,21 @@ public class BuildingPlot : Entity
         arw_goldText = buildCanvas.transform.Find("ArcherButton").transform.Find("goldText").GetComponent<TextMeshProUGUI>();
         arw_woodText = buildCanvas.transform.Find("ArcherButton").transform.Find("woodText").GetComponent<TextMeshProUGUI>();
 
+        mle_goldText = buildCanvas.transform.Find("FootmanButton").transform.Find("goldText").GetComponent<TextMeshProUGUI>();
+        mle_woodText = buildCanvas.transform.Find("FootmanButton").transform.Find("woodText").GetComponent<TextMeshProUGUI>();
+
         lyard_goldText = buildCanvas.transform.Find("LumberyardButton").transform.Find("goldText").GetComponent<TextMeshProUGUI>();
     }
 
     private void InitCostText()
     {
-        arw_goldText.text = i_archerGCost.ToString();
-        arw_woodText.text = i_archerLCost.ToString();
+        arw_goldText.text = archer_GCost.ToString();
+        arw_woodText.text = archer_LCost.ToString();
 
-        lyard_goldText.text = i_lumberyardGCost.ToString();
+        mle_goldText.text = melee_GCost.ToString();
+        mle_woodText.text = melee_LCost.ToString();
+        
+        lyard_goldText.text = lumyard_GCost.ToString();
     }
 
     public void PlotReturn()
@@ -170,18 +185,18 @@ public class BuildingPlot : Entity
 
     public void BuildLumberyardBtn()
     {
-        if (!b_built && managerStats.GetGold() >= i_lumberyardGCost)
+        if (!b_built && managerStats.GetGold() >= lumyard_GCost)
         {
             // set build type
             b_built = true;
             buildingType = BuildingType.Lumberyard;
 
             // set build duration
-            f_buildDur = f_lumberDur;
-            f_buildTimer = 0.0f;
+            buildDur = lumber_BuildDur;
+            buildTimer = 0.0f;
 
             // decrease amount of resources
-            managerStats.MinusGold(i_lumberyardGCost);
+            managerStats.MinusGold(lumyard_GCost);
 
             buildCanvas.SetActive(false);
             progressCanvas.SetActive(true);
@@ -189,19 +204,19 @@ public class BuildingPlot : Entity
     }
     public void BuildArrowTowerBtn()
     {
-        if (!b_built && managerStats.GetGold() >= i_archerGCost && managerStats.GetLumber() >= i_archerLCost)
+        if (!b_built && managerStats.GetGold() >= archer_GCost && managerStats.GetLumber() >= archer_LCost)
         {
             // set build type
             b_built = true;
             buildingType = BuildingType.ArcherTower;
 
             // set build duration
-            f_buildDur = f_arrowDur;
-            f_buildTimer = 0.0f;
+            buildDur = arrow_BuildDur;
+            buildTimer = 0.0f;
 
             // decrease amount of resources
-            managerStats.MinusGold(i_archerGCost);
-            managerStats.MinusLumber(i_archerLCost);
+            managerStats.MinusGold(archer_GCost);
+            managerStats.MinusLumber(archer_LCost);
             
             buildCanvas.SetActive(false);
             progressCanvas.SetActive(true);
@@ -209,15 +224,30 @@ public class BuildingPlot : Entity
     }
     public void BuildFootmanTowerBtn()
     {
-        //instantiate a footman tower at this position
-        //make instantiated object know its parent, and when its destroy make it setactive=true its parent (its respective plot)
+        if (!b_built && managerStats.GetGold() >= melee_GCost && managerStats.GetLumber() >= melee_LCost)
+        {
+            // set build type
+            b_built = true;
+            buildingType = BuildingType.FootmanTower;
+
+            // set build duration
+            buildDur = melee_BuildDur;
+            buildTimer = 0.0f;
+
+            // decrease amount of resources
+            managerStats.MinusGold(melee_GCost);
+            managerStats.MinusLumber(melee_LCost);
+
+            buildCanvas.SetActive(false);
+            progressCanvas.SetActive(true);
+        }
     }
 
-    public int GetLumberyardGCost() { return i_lumberyardGCost; }
+    public int GetLumberyardGCost() { return lumyard_GCost; }
     
-    public int GetArrowtowerGCost() { return i_archerGCost; }
+    public int GetArrowtowerGCost() { return archer_GCost; }
 
-    public int GetArrowtowerLCost() { return i_archerLCost; }
+    public int GetArrowtowerLCost() { return archer_LCost; }
 
-    float CalculateProgress(){ return f_buildTimer / f_buildDur; }
+    float CalculateProgress(){ return buildTimer / buildDur; }
 }
