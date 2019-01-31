@@ -11,7 +11,7 @@ public class Settings : MonoBehaviour
     public AudioSource m_audioSource;
     public AudioMixer m_audioMixer;
     public GameObject pauseMenuUI;
-    public Slider volumeSlider;
+    public Slider masterSlider, musicSlider, sfxSlider;
     private bool isPaused = false;
 
     // Use this for initialization
@@ -19,7 +19,15 @@ public class Settings : MonoBehaviour
     {
         m_audioManager = GameObject.Find("AudioManager");
         m_audioSource = m_audioManager.GetComponent<AudioSource>();
-        volumeSlider.value = PlayerPrefs.GetFloat("musicVolume");
+
+        if (PlayerPrefs.HasKey("masterVolume"))
+            masterSlider.value = PlayerPrefs.GetFloat("masterVolume");
+
+        if (PlayerPrefs.HasKey("musicVolume"))
+            musicSlider.value = PlayerPrefs.GetFloat("musicVolume");
+
+        if (PlayerPrefs.HasKey("sfxVolume"))
+            sfxSlider.value = PlayerPrefs.GetFloat("sfxVolume");
     }
 
     public void Pause()
@@ -55,10 +63,25 @@ public class Settings : MonoBehaviour
         AudioManager.instance.OffMusic();
     }
 
+    public void SetMasterVolume(float volume)
+    {
+        m_audioMixer.SetFloat("masterVolume", volume);
+        PlayerPrefs.SetFloat("masterVolume", volume);
+        PlayerPrefs.Save();
+    }
+
     public void SetMusicVolume(float volume)
     {
         m_audioMixer.SetFloat("musicVolume", volume);
-        AudioManager.instance.AdjustMusicVolume(volume);
+        PlayerPrefs.SetFloat("musicVolume", volume);
+        PlayerPrefs.Save();
+    }
+
+    public void SetSfxVolume(float volume)
+    {
+        m_audioMixer.SetFloat("sfxVolume", volume);
+        PlayerPrefs.SetFloat("sfxVolume", volume);
+        PlayerPrefs.Save();
     }
 
     public void QuitButton()

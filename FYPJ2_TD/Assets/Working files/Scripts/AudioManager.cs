@@ -13,15 +13,20 @@ public class AudioManager : MonoBehaviour
 
     void Awake()
     {
-        m_audioSource.Play();
-        m_audioSfx.Play();
-
         if (instance == null)
             instance = this;
         else if (instance != this)
             Destroy(gameObject);
 
         DontDestroyOnLoad(gameObject);
+    }
+
+    void Start()
+    {
+        m_audioSource.Play();
+        m_audioMixer.SetFloat("masterVolume", PlayerPrefs.GetFloat("masterVolume", 0));
+        m_audioMixer.SetFloat("musicVolume", PlayerPrefs.GetFloat("musicVolume", 0));
+        m_audioMixer.SetFloat("sfxVolume", PlayerPrefs.GetFloat("sfxVolume", 0));
     }
 
     public void PlayAudio(AudioClip clip)
@@ -51,12 +56,4 @@ public class AudioManager : MonoBehaviour
             m_audioSource.Play();
         }
     }
-
-    public void AdjustMusicVolume(float volume)
-    {
-        m_audioMixer.SetFloat("musicVolume", volume);
-        PlayerPrefs.SetFloat("musicVolume", volume);
-        PlayerPrefs.Save();
-    }
-    
 }

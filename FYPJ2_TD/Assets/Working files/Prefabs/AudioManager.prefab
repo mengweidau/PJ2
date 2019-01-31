@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4093622496230884}
   - component: {fileID: 114552635583632854}
   - component: {fileID: 82200650844355820}
-  - component: {fileID: 82270839435593350}
+  - component: {fileID: 82001255609184378}
   m_Layer: 0
   m_Name: AudioManager
   m_TagString: Untagged
@@ -42,7 +42,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!82 &82200650844355820
+--- !u!82 &82001255609184378
 AudioSource:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -50,9 +50,10 @@ AudioSource:
   m_GameObject: {fileID: 1700191655815878}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 0
+  OutputAudioMixerGroup: {fileID: 243343547652609114, guid: 9a064d12bf7437948a8bf9056af680b8,
+    type: 2}
+  m_audioClip: {fileID: 8300000, guid: 42139153c092f6f48989b2948a39ca1b, type: 3}
+  m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -137,7 +138,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!82 &82270839435593350
+--- !u!82 &82200650844355820
 AudioSource:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -145,10 +146,10 @@ AudioSource:
   m_GameObject: {fileID: 1700191655815878}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 243343547652609114, guid: 9a064d12bf7437948a8bf9056af680b8,
+  OutputAudioMixerGroup: {fileID: 243533749920425728, guid: 9a064d12bf7437948a8bf9056af680b8,
     type: 2}
-  m_audioClip: {fileID: 8300000, guid: 17a52ddfe8f22164893172ec1e681eb5, type: 3}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -245,6 +246,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_audioSfx: {fileID: 82200650844355820}
-  m_audioSource: {fileID: 82270839435593350}
+  m_audioSource: {fileID: 82001255609184378}
   m_audioMixer: {fileID: 24100000, guid: 9a064d12bf7437948a8bf9056af680b8, type: 2}
   Shoot: {fileID: 8300000, guid: 38da3dd8962c3f846ae6ab970e526248, type: 3}
