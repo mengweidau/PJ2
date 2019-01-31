@@ -20,8 +20,6 @@ public class TrollPatrol : State
     public override void Update()
     {
         Vector3 direction = (thisEnemy.targetWaypoint.position - thisEnemy.transform.position).normalized;
-        if (Vector3.Distance(thisEnemy.transform.position, thisEnemy.targetWaypoint.position) < 0.1f)
-        
         if (Vector3.Distance(thisEnemy.targetWaypoint.position, thisEnemy.transform.position) < 0.1f)
         {
             thisEnemy.GetNextwaypoint();
