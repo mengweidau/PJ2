@@ -95,12 +95,32 @@ public class FirebaseAuth : ScriptableObject
         int numOfLvls = 2;
         for (int i = 1; i < numOfLvls + 1; ++i)
         {
-            //Ref.Child("users").Child(firebaseUser.UserId).Child("Levels").Child("level"+i).SetValueAsync(defaultNum);
             Ref.Child("users").Child(firebaseUser.UserId).Child("Levels").Child("level" + i).Child("cleared").SetValueAsync(defaultNum);
-            //Ref.Child("users").Child(firebaseUser.UserId).Child("Levels").Child("stars" + i).SetValueAsync(defaultNum);
             Ref.Child("users").Child(firebaseUser.UserId).Child("Levels").Child("level" + i).Child("stars").SetValueAsync(defaultNum);
         }
-        Ref.Child("users").Child(firebaseUser.UserId).Child("Currency").Child("gem").SetValueAsync(defaultNum);
+        Ref.Child("users").Child(firebaseUser.UserId).Child("Currency").Child("gems").SetValueAsync(defaultNum);
+        Ref.Child("users").Child(firebaseUser.UserId).Child("Spells").Child("fire").SetValueAsync(defaultNum);
+        Ref.Child("users").Child(firebaseUser.UserId).Child("Spells").Child("freeze").SetValueAsync(defaultNum);
+    }
+    
+    public void FetchSnapshot()
+    {
+        Ref.Child("users").Child(firebaseUser.UserId).GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsFaulted)
+            {
+                // Handle the error...
+                Debug.Log("task.IsFaulted");
+            }
+            else if (task.IsCanceled)
+            {
+                Debug.Log("task.IsCanceled");
+            }
+            else if (task.IsCompleted)
+            {
+                mSnapshot = task.Result;
+            }
+        });
     }
 
     // Update level completed status for input level
@@ -130,24 +150,13 @@ public class FirebaseAuth : ScriptableObject
         Ref.Child("users").Child(firebaseUser.UserId).Child("Currency").Child("gems").SetValueAsync(_gem);
     }
 
-    public void FetchSnapshot()
+    // Update spells
+    public void UpdateSpells(string _spell, int _unlocked)
     {
-        Ref.Child("users").Child(firebaseUser.UserId).GetValueAsync().ContinueWith(task =>
-        {
-            if (task.IsFaulted)
-            {
-                // Handle the error...
-                Debug.Log("task.IsFaulted");
-            }
-            else if (task.IsCanceled)
-            {
-                Debug.Log("task.IsCanceled");
-            }
-            else if (task.IsCompleted)
-            {
-                mSnapshot = task.Result;
-            }
-        });
+        if (firebaseUser == null || Ref == null)
+            return;
+
+        Ref.Child("users").Child(firebaseUser.UserId).Child("Spells").Child(_spell).SetValueAsync(_unlocked);
     }
 
     // Fetch level completed status for input level
@@ -168,54 +177,16 @@ public class FirebaseAuth : ScriptableObject
         return System.Convert.ToInt32(SnapShot.Child("Levels").Child("level" + _level).Child("stars").Value);
     }
 
+    // Fetch number of gems
     public int FetchGems()
     {
-        return System.Convert.ToInt32(SnapShot.Child("Currency").Child("gem").Value);
+        return System.Convert.ToInt32(SnapShot.Child("Currency").Child("gems").Value);
     }
 
-    //public void FetchUserData()
-    //{
-    //    Ref.Child("users").Child(firebaseUser.UserId).GetValueAsync().ContinueWith(task => 
-    //    {
-    //      if (task.IsFaulted)
-    //      {
-    //            // Handle the error...
-    //            Debug.Log("task.IsFaulted");
-    //        }
-    //      else if (task.IsCanceled)
-    //      {
-    //            Debug.Log("task.IsCanceled");
-    //      }
-    //      else if (task.IsCompleted)
-    //      {
-    //          DataSnapshot snapshot = task.Result;
-    //            // Do something with snapshot...
-    //            Debug.Log("FOUND DATABASE");
-    //            Debug.Log("level1: " + snapshot.Child("Levels").Child("level1").Value.ToString());
-    //            //Debug.Log("val: " + snapshot.Child("val").Value.ToString());
-
-    //            /*
-    //             * Dictionary<string, System.Object> datalist = (Dictionary<string, System.Object>)task.Result.Value;
-    //            // Do something with snapshot...
-    //            Debug.Log("FOUND DATABASE");
-    //            Debug.Log("username id : " + (string)datalist["username"]);
-    //            Debug.Log("val : " + System.Convert.ToUInt32( datalist["val"]));
-    //            //Debug.Log("username: " + snapshot.Child("username").Value.ToString());
-    //            //Debug.Log("val: " + snapshot.Child("val").Value.ToString());
-    //             */
-
-    //            /*
-    //             Debug.Log("FOUND DATABASE");
-    //            Debug.Log("username: " + snapshot.Child("username").Value.ToString());
-    //            Debug.Log("val: " + snapshot.Child("val").Value.ToString());
-
-    //            User user = JsonUtility.FromJson<User>(snapshot.Value.ToString());
-    //            Debug.Log("username: " + user.username);
-    //            Debug.Log("val: " + user.val);
-    //             */
-    //        }
-    //    });
-    //}
+    public int FetchSpellStatus(string _spell)
+    {
+        return System.Convert.ToInt32(SnapShot.Child("Spells").Child(_spell).Value);
+    }
 
     public void CreateUser(string email, string password)
     {

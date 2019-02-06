@@ -7,8 +7,8 @@ using TMPro;
 public class BuildingPlot : Entity
 {
     [SerializeField] int lumyard_GCost = 100;
-    [SerializeField] int archer_GCost = 150, archer_LCost = 50;
-    [SerializeField] int melee_GCost = 150, melee_LCost = 100;
+    [SerializeField] int archer_GCost = 100, archer_LCost = 75;
+    [SerializeField] int melee_GCost = 150, melee_LCost = 25;
     [SerializeField] float lumber_BuildDur = 2.0f, arrow_BuildDur = 2.0f, melee_BuildDur = 2.0f;
     float buildTimer, buildDur;
     public bool b_built;

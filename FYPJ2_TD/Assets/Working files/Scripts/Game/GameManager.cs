@@ -9,10 +9,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] ManagerStats managerStats;
     [SerializeField] int level;
     [SerializeField] int stars;
+    [SerializeField] GameObject fireSpell, freezeSpell;
 
     private void Start()
     {
         StartCoroutine(InitStars());
+        StartCoroutine(InitSpells());
     }
 
     // Update is called once per frame
@@ -20,6 +22,20 @@ public class GameManager : MonoBehaviour
     {
         WinCondition();
         LoseCondition();
+    }
+
+    public IEnumerator InitSpells()
+    {
+        fbAuth.FetchSnapshot();
+        yield return new WaitForSeconds(2);
+
+        int fireUnlocked = fbAuth.FetchSpellStatus("fire");
+        int freezeUnlocked = fbAuth.FetchSpellStatus("freeze");
+
+        if (fireUnlocked == 1)
+            fireSpell.SetActive(true);
+        if (freezeUnlocked == 1)
+            freezeSpell.SetActive(true);
     }
 
     public IEnumerator InitStars()
@@ -71,7 +87,6 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(2);
         if (Application.CanStreamedLevelBeLoaded("MenuScene"))
         {
-            Debug.Log("back to menu");
             SceneManager.LoadScene("MenuScene", LoadSceneMode.Single);
         }
     }

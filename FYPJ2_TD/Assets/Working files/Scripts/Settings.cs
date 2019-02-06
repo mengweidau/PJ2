@@ -90,7 +90,7 @@ public class Settings : MonoBehaviour
 
     public void QuitButton()
     {
-        SceneManager.LoadScene("LoginScene");
+        SceneManager.LoadScene("MenuScene", LoadSceneMode.Single);
     }
 
 }

@@ -1679,10 +1679,10 @@ MonoBehaviour:
   targets: []
   attackingTargets: []
   lumyard_GCost: 100
-  archer_GCost: 150
+  archer_GCost: 100
   archer_LCost: 50
   melee_GCost: 150
-  melee_LCost: 100
+  melee_LCost: 25
   lumber_BuildDur: 2
   arrow_BuildDur: 2
   melee_BuildDur: 2

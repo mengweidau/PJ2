@@ -1,22 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour {
     [SerializeField] FirebaseAuth fbAuth;
+    [SerializeField] TextMeshProUGUI gemUGUI;
+    [SerializeField] int gems = 0;
 
-    //private void Start()
-    //{
-    //    StartCoroutine(InitialiseMenu());
-    //}
+    private void Start()
+    {
+        StartCoroutine(UpdateMenu());
+    }
 
-    //public IEnumerator InitialiseMenu()
-    //{
-    //    fbAuth.FetchSnapshot();
-    //    yield return new WaitForSeconds(2);
-    //    //fetch gem,initalise gem, display gem
-    //}
+    public IEnumerator UpdateMenu()
+    {
+        fbAuth.FetchSnapshot();
+        yield return new WaitForSeconds(2);
+        gems = fbAuth.FetchGems();
+        gemUGUI.text = gems.ToString();
+    }
 
     public void SignoutBtn()
     {

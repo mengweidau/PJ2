@@ -38,7 +38,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4331684401692912}
   - component: {fileID: 136237020033669494}
-  - component: {fileID: 114564881673268700}
   - component: {fileID: 114534694895764456}
   m_Layer: 0
   m_Name: Lumberyard
@@ -305,33 +304,6 @@ MonoBehaviour:
   attackingTargets: []
   parentPlot: {fileID: 0}
   towerCanvas: {fileID: 1054997555993978}
-  upgradeCanvas: {fileID: 1790847811694628}
-  lumberCapacity: 0
---- !u!114 &114564881673268700
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1251329677299746}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d59812e2c1f44eb4d9f3360a0b9e4ffb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  f_health: 10
-  f_maxHealth: 0
-  f_attackDmg: 2
-  f_attackSpeed: 3
-  f_moveSpeed: 0
-  s_name: Archer Tower
-  targets: []
-  attackingTargets: []
-  attackTimer: 0
-  numOfTargets: 1
-  parentPlot: {fileID: 0}
-  arrowPrefab: {fileID: 1995130977462604, guid: 0b9c0b3d7aac5524f9912f7a6860301f,
-    type: 2}
-  towerCanvas: {fileID: 0}
   upgradeCanvas: {fileID: 1790847811694628}
 --- !u!114 &114632681101713592
 MonoBehaviour:
