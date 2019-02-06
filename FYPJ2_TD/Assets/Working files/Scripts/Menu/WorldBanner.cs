@@ -64,4 +64,6 @@ public class WorldBanner : MonoBehaviour {
             SceneManager.LoadScene("Level" + lvl, LoadSceneMode.Single);
         }
     }
+
+    public int GetLevel() { return lvl; }
 }

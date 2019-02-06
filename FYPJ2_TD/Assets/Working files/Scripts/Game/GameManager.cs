@@ -48,11 +48,20 @@ public class GameManager : MonoBehaviour
     void SetStars()
     {
         if (managerStats.GetLife() >= 7 && stars < 3)
+        {
             fbAuth.UpdateLevelStars(level, 3);
+            fbAuth.UpdateGems(100);
+        }
         else if (managerStats.GetLife() >= 4 && stars < 2)
+        {
             fbAuth.UpdateLevelStars(level, 2);
+            fbAuth.UpdateGems(50);
+        }
         else if (managerStats.GetLife() > 0 && stars <= 0)
+        {
             fbAuth.UpdateLevelStars(level, 1);
+            fbAuth.UpdateGems(25);
+        }
     }
 
     void WinCondition()
