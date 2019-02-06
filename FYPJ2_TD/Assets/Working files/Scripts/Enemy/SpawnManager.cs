@@ -59,7 +59,7 @@ public class SpawnManager : MonoBehaviour
         {
             if (state != SpawnState.SPAWNING)
             {
-                Debug.Log("Spawning next wave");
+                //Debug.Log("Spawning next wave");
                 StartCoroutine(SpawnWave(wave[nextWave]));
             }
         }

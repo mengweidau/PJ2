@@ -34,7 +34,7 @@ public class MeleeTowerTap : MonoBehaviour {
                 if (parentTower != null && parentRadius != null &&
                     GameObject.ReferenceEquals(hit.transform.gameObject, parentRadius))
                 {
-                    parentTower.SetRallyPoint(new Vector3(hit.point.x, hit.point.y, hit.point.z));
+                    parentTower.SetRallyPoint(new Vector3(hit.point.x, -5.0f, hit.point.z));
                 }
             }
         }

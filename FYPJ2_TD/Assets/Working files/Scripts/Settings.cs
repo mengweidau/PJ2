@@ -17,8 +17,11 @@ public class Settings : MonoBehaviour
     // Use this for initialization
     void Awake()
     {
-        m_audioManager = GameObject.Find("AudioManager");
-        m_audioSource = m_audioManager.GetComponent<AudioSource>();
+        if (GameObject.Find("AudioManager"))
+        {
+            m_audioManager = GameObject.Find("AudioManager");
+            m_audioSource = m_audioManager.GetComponent<AudioSource>();
+        }
 
         if (PlayerPrefs.HasKey("masterVolume"))
             masterSlider.value = PlayerPrefs.GetFloat("masterVolume");
@@ -32,6 +35,7 @@ public class Settings : MonoBehaviour
 
     public void Pause()
     {
+        Debug.Log("pause btn pressed");
         isPaused = !isPaused;
         if (isPaused)
             ActivePauseMenu();

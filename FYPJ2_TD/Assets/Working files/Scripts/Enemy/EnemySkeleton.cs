@@ -17,20 +17,17 @@ public class EnemySkeleton : Entity
     private float health;
     
     [SerializeField] GameObject canvas;
-
     [SerializeField] string currentState = "";
-
-    public EnemySkeleton()
-    {
-        s_name = "Skeleton";
-    }
+    List<GameObject> clearList;
 
     // Use this for initialization
     void Start()
     {
         targetWaypoint = Waypoints.waypoints[0];
 
+        s_name = "Skeleton";
         health = f_health;
+        clearList = new List<GameObject>();
 
         sm = new StateMachine();
         sm.AddState(new SkeletonPatrol("Patrol", this));
@@ -104,7 +101,7 @@ public class EnemySkeleton : Entity
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Enter");
+            //Debug.Log("Enter");
             targets.Add(other.gameObject);
         }
     }
@@ -128,5 +125,25 @@ public class EnemySkeleton : Entity
                 attackingTargets.Add(targets[i]);
             }
         }
+    }
+
+    public void RefreshTargList()
+    {
+        // adds non-null gameobjects into clear list
+        for (int i = 0; i < GetAttackingTargets().Count; i++)
+        {
+            if (GetAttackingTargets()[i])
+                clearList.Add(GetAttackingTargets()[i]);
+        }
+
+        //clear the targList
+        GetAttackingTargets().Clear();
+
+        //add back gameobjects from clearList to targList
+        for (int i = 0; i < clearList.Count; i++)
+            GetAttackingTargets().Add(clearList[i]);
+
+        //clear the clearList
+        clearList.Clear();
     }
 }

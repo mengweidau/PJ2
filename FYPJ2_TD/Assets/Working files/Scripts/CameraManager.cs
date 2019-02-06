@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour {
 
-
+    [SerializeField] bool lockZoom = false;
     [SerializeField] float minPanX = -1.0f, maxPanX = 1.0f;
     [SerializeField] float minPanY = -1.0f, maxPanY = 1.0f;
     [SerializeField] float minPanZ = -1.0f, maxPanZ = 1.0f;
@@ -24,9 +24,7 @@ public class CameraManager : MonoBehaviour {
     }
 	
 	void Update () {
-#if (UNITY_EDITOR)
         PcControls();
-#endif
 
 #if UNITY_ANDROID
         MobileCameraControls();
@@ -54,22 +52,25 @@ public class CameraManager : MonoBehaviour {
             transform.Translate(Vector3.right * unityPanningSpeed * Time.deltaTime);
 
         //zoom controls
-        if (Input.GetKey(KeyCode.Equals) || Input.GetKey(KeyCode.KeypadPlus) && transform.position.y > minPanY)
+        if (!lockZoom)
         {
-            //zoom in, decrease the minimum border
-            transform.Translate(Vector3.forward * unityPanningSpeed * Time.deltaTime);
-            minPanX -= unityPanningSpeed * Time.deltaTime;
-            minPanZ -= unityPanningSpeed * Time.deltaTime * 0.5f;
-            maxPanX += unityPanningSpeed * Time.deltaTime;
-            maxPanZ += unityPanningSpeed * Time.deltaTime * 0.5f;
-        }
-        else if (Input.GetKey(KeyCode.Minus) || Input.GetKey(KeyCode.KeypadMinus) && transform.position.y < maxPanY)
-        {
-            transform.Translate(-Vector3.forward * unityPanningSpeed * Time.deltaTime);
-            minPanX += unityPanningSpeed * Time.deltaTime;
-            minPanZ += unityPanningSpeed * Time.deltaTime * 0.5f;
-            maxPanX -= unityPanningSpeed * Time.deltaTime;
-            maxPanZ -= unityPanningSpeed * Time.deltaTime * 0.5f;
+            if (Input.GetKey(KeyCode.Equals) || Input.GetKey(KeyCode.KeypadPlus) && transform.position.y > minPanY)
+            {
+                //zoom in, decrease the minimum border
+                transform.Translate(Vector3.forward * unityPanningSpeed * Time.deltaTime);
+                minPanX -= unityPanningSpeed * Time.deltaTime;
+                minPanZ -= unityPanningSpeed * Time.deltaTime * 0.5f;
+                maxPanX += unityPanningSpeed * Time.deltaTime;
+                maxPanZ += unityPanningSpeed * Time.deltaTime * 0.5f;
+            }
+            else if (Input.GetKey(KeyCode.Minus) || Input.GetKey(KeyCode.KeypadMinus) && transform.position.y < maxPanY)
+            {
+                transform.Translate(-Vector3.forward * unityPanningSpeed * Time.deltaTime);
+                minPanX += unityPanningSpeed * Time.deltaTime;
+                minPanZ += unityPanningSpeed * Time.deltaTime * 0.5f;
+                maxPanX -= unityPanningSpeed * Time.deltaTime;
+                maxPanZ -= unityPanningSpeed * Time.deltaTime * 0.5f;
+            }
         }
     }
 
@@ -84,10 +85,6 @@ public class CameraManager : MonoBehaviour {
         {
             if (Input.GetTouch(0).phase == TouchPhase.Moved)
                 MobileDragging();
-            else if (Input.GetTouch(0).phase == TouchPhase.Ended && !moved)
-            {
-                //MobileTap();
-            }
             else if (Input.GetTouch(0).phase == TouchPhase.Ended)
                 moved = false;
         }
@@ -106,33 +103,36 @@ public class CameraManager : MonoBehaviour {
 
     void MobileZoom()
     {
-        Debug.Log("zooming- mobile");
-        Touch touchZero = Input.GetTouch(0);
-        Touch touchOne = Input.GetTouch(1);
-
-        Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
-        Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
-
-        float prevTouchDeltaMagnitude = (touchZeroPrevPos - touchOnePrevPos).magnitude;
-        float touchDeltaMagnitude = (touchZero.position - touchOne.position).magnitude;
-
-        deltaMagnitudeDiff = prevTouchDeltaMagnitude - touchDeltaMagnitude;
-
-        if (deltaMagnitudeDiff > 0 && transform.position.y < maxPanY) //zoom out, increase pos.y
+        if (!lockZoom)
         {
-            transform.Translate(-Vector3.forward * mobileZoomSpeed * Time.deltaTime);
-            minPanX += mobileZoomSpeed * Time.deltaTime;
-            minPanZ += mobileZoomSpeed * Time.deltaTime * 0.5f;
-            maxPanX -= mobileZoomSpeed * Time.deltaTime;
-            maxPanZ -= mobileZoomSpeed * Time.deltaTime * 0.5f;
-        }
-        else if (deltaMagnitudeDiff < 0 && transform.position.y > minPanY)//zoom in, decrease pos
-        {
-            transform.Translate(Vector3.forward * mobileZoomSpeed * Time.deltaTime);
-            minPanX -= mobileZoomSpeed * Time.deltaTime;
-            minPanZ -= mobileZoomSpeed * Time.deltaTime * 0.5f;
-            maxPanX += mobileZoomSpeed * Time.deltaTime;
-            maxPanZ += mobileZoomSpeed * Time.deltaTime * 0.5f;
+            //Debug.Log("zooming- mobile");
+            Touch touchZero = Input.GetTouch(0);
+            Touch touchOne = Input.GetTouch(1);
+
+            Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
+            Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+
+            float prevTouchDeltaMagnitude = (touchZeroPrevPos - touchOnePrevPos).magnitude;
+            float touchDeltaMagnitude = (touchZero.position - touchOne.position).magnitude;
+
+            deltaMagnitudeDiff = prevTouchDeltaMagnitude - touchDeltaMagnitude;
+
+            if (deltaMagnitudeDiff > 0 && transform.position.y < maxPanY) //zoom out, increase pos.y
+            {
+                transform.Translate(-Vector3.forward * mobileZoomSpeed * Time.deltaTime);
+                minPanX += mobileZoomSpeed * Time.deltaTime;
+                minPanZ += mobileZoomSpeed * Time.deltaTime * 0.5f;
+                maxPanX -= mobileZoomSpeed * Time.deltaTime;
+                maxPanZ -= mobileZoomSpeed * Time.deltaTime * 0.5f;
+            }
+            else if (deltaMagnitudeDiff < 0 && transform.position.y > minPanY)//zoom in, decrease pos
+            {
+                transform.Translate(Vector3.forward * mobileZoomSpeed * Time.deltaTime);
+                minPanX -= mobileZoomSpeed * Time.deltaTime;
+                minPanZ -= mobileZoomSpeed * Time.deltaTime * 0.5f;
+                maxPanX += mobileZoomSpeed * Time.deltaTime;
+                maxPanZ += mobileZoomSpeed * Time.deltaTime * 0.5f;
+            }
         }
     }
 }

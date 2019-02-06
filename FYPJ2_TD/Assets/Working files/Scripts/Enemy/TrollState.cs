@@ -19,6 +19,8 @@ public class TrollPatrol : State
 
     public override void Update()
     {
+        thisEnemy.RefreshTargList();
+
         Vector3 direction = (thisEnemy.targetWaypoint.position - thisEnemy.transform.position).normalized;
         if (Vector3.Distance(thisEnemy.targetWaypoint.position, thisEnemy.transform.position) < 0.1f)
         {
@@ -61,25 +63,32 @@ public class TrollChase : State
 
     public override void Update()
     {
-        for (int i = 0; i < thisEnemy.GetAttackingTargets().Count; i++)
+        thisEnemy.RefreshTargList();
+
+        if (thisEnemy.GetAttackingTargets().Count > 0)
         {
-            if (thisEnemy.GetAttackingTargets()[i] != null)
+            for (int i = 0; i < thisEnemy.GetAttackingTargets().Count; i++)
             {
-                if (Vector3.Distance(thisEnemy.GetAttackingTargets()[i].transform.position, thisEnemy.transform.position) < 0.2f)
+                if (thisEnemy.GetAttackingTargets()[i] != null)
                 {
-                    thisEnemy.sm.SetNextState("Attack");
-                }
-                else if (Vector3.Distance(thisEnemy.GetAttackingTargets()[i].transform.position, thisEnemy.transform.position) < 1.0f)
-                {
-                    direction = (thisEnemy.GetAttackingTargets()[i].transform.position - thisEnemy.transform.position).normalized;
-                    thisEnemy.transform.Translate(direction * thisEnemy.GetMoveSpeed() * Time.deltaTime);
-                }
-                else
-                {
-                    thisEnemy.sm.SetNextState("Patrol");
+                    if (Vector3.Distance(thisEnemy.GetAttackingTargets()[i].transform.position, thisEnemy.transform.position) < 0.2f)
+                    {
+                        thisEnemy.sm.SetNextState("Attack");
+                    }
+                    else if (Vector3.Distance(thisEnemy.GetAttackingTargets()[i].transform.position, thisEnemy.transform.position) < 1.0f)
+                    {
+                        direction = (thisEnemy.GetAttackingTargets()[i].transform.position - thisEnemy.transform.position).normalized;
+                        thisEnemy.transform.Translate(direction * thisEnemy.GetMoveSpeed() * Time.deltaTime);
+                    }
+                    else
+                    {
+                        thisEnemy.sm.SetNextState("Patrol");
+                    }
                 }
             }
         }
+        else
+            thisEnemy.sm.SetNextState("Patrol");
     }
 
     public override void Exit()
@@ -106,6 +115,8 @@ public class TrollAttack : State
 
     public override void Update()
     {
+        thisEnemy.RefreshTargList();
+
         if (thisEnemy.GetAttackingTargets().Count > 0)
         {
             for (int i = 0; i < thisEnemy.GetAttackingTargets().Count; i++)

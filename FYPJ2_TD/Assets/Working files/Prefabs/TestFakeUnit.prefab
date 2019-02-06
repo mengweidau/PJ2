@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 95725779877100896}
   - component: {fileID: 212639858496080252}
   m_Layer: 0
-  m_Name: SkeletonSprite
+  m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

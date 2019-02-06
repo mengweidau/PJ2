@@ -14,18 +14,19 @@ public class MeleeTower : Entity
     public bool selectedRallypoint;
 
     //manager stats 
-    GameObject canvas;
+    ManagerStats managerStats;
 
     // Soldier related
     float spawnTimer = 0.0f;
-    [SerializeField] float spawnDur = 2.0f;
-    [SerializeField] int soldierMaxCount = 1;
+    float spawnDur = 2.0f;
+    [SerializeField] int soldierMaxCount = 3;
     [SerializeField] GameObject soldierPrefab;
     [SerializeField] List<GameObject> soldierList;
 
     //ui related
+    [SerializeField] Sprite upgradeImg;
     [SerializeField] GameObject towerCanvas, upgradeCanvas, progressCanvas;
-    Button towerButton;
+    Button towerButton, upgradeButton;
     Slider progressSlider;
 
 
@@ -48,6 +49,25 @@ public class MeleeTower : Entity
     private void Awake()
     {
         spawnTimer = 0.0f;
+        InitialiseCanvas();
+
+        managerStats = GameObject.Find("Canvas").GetComponent<ManagerStats>(); //manager stats
+    }
+
+    private void Update()
+    {
+        SoldierCheck();
+        SpawnSoldier();
+    }
+
+    void InitialiseCanvas()
+    {
+        if (transform.Find("RangeRadius"))
+        {
+            rangeRadiusSprite = transform.Find("RangeRadius").gameObject;
+            rangeRadiusSprite.SetActive(false);
+            rangeRadiusCollider = transform.Find("RadiusCollider").gameObject;
+        }
 
         if (transform.Find("TowerCanvas"))
         {
@@ -58,9 +78,7 @@ public class MeleeTower : Entity
         {
             upgradeCanvas = transform.Find("UpgradeCanvas").gameObject;
             upgradeCanvas.SetActive(false);
-            rangeRadiusSprite = upgradeCanvas.transform.Find("RangeRadius").gameObject;
-            rangeRadiusSprite.SetActive(false);
-            rangeRadiusCollider = transform.Find("RadiusCollider").gameObject;
+            upgradeButton = upgradeCanvas.transform.Find("UpgradeButton").GetComponent<Button>();
         }
         if (transform.Find("ProgressCanvas"))
         {
@@ -86,29 +104,39 @@ public class MeleeTower : Entity
             rallyPointImg = rallyPoint.transform.Find("RallypointCanvas").transform.Find("Image").GetComponent<Image>();
             rallyPointImg.color = new Color32(255, 255, 225, 0);
         }
-        canvas = GameObject.Find("Canvas"); //manager stats
-    }
-
-    private void Update()
-    {
-        SpawnSoldier();
-        DisplayProgressSlider();
     }
 
     void SpawnSoldier()
     {
         if (soldierList.Count < soldierMaxCount && soldierPrefab != null)
         {
+            progressCanvas.SetActive(true);
             spawnTimer += 1 * Time.deltaTime;
             progressSlider.value = CalculateProgress();
 
             if (spawnTimer > spawnDur)
             {
-                GameObject go = Instantiate(soldierPrefab, rallyPoint.transform.position, Quaternion.identity);
+                GameObject go = Instantiate(soldierPrefab, transform.position, Quaternion.identity);
                 go.GetComponent<Soldier>().SetParentTower(this);
-                //go's waypoint = rallypoint
+                go.GetComponent<Soldier>().SetRallyPoint(rallyPoint);
+                if (level == MeleeLevel.LEVEL2)
+                    go.GetComponent<Soldier>().SetUpgradedStats();
                 soldierList.Add(go);
+
                 spawnTimer = 0.0f;
+                progressCanvas.SetActive(false);
+            }
+        }
+    }
+
+    void SoldierCheck()
+    {
+        if (soldierList.Count != 0)
+        {
+            for (int i = 0; i < soldierList.Count; i++)
+            {
+                if (soldierList[i] == null)
+                    soldierList.Remove(soldierList[i]);
             }
         }
     }
@@ -130,8 +158,8 @@ public class MeleeTower : Entity
         wood = (int)(wood * 0.25f);
 
         //return cost
-        canvas.GetComponent<ManagerStats>().AddGold(gold);
-        canvas.GetComponent<ManagerStats>().AddLumber(wood);
+        managerStats.AddGold(gold);
+        managerStats.AddLumber(wood);
 
         //destroy this tower's soldiers
         for (int i = 0; i < soldierList.Count; ++i)
@@ -147,6 +175,8 @@ public class MeleeTower : Entity
 
     public void SelectedRallyPointButton()
     {
+        upgradeCanvas.SetActive(false);
+
         selectedRallypoint = !selectedRallypoint;
         rangeRadiusSprite.SetActive(selectedRallypoint);
         rangeRadiusCollider.SetActive(selectedRallypoint);
@@ -159,6 +189,11 @@ public class MeleeTower : Entity
         rallyPoint.transform.position = _vec;
         rallyPointImg.color = new Color(255, 255, 255, 255);
         CancelUpgrade();
+
+        for (int i = 0; i < soldierList.Count; i++)
+        {
+            soldierList[i].GetComponent<Soldier>().sm.SetNextState("Move");
+        }
     }
 
     public void SelectedTower()
@@ -178,16 +213,20 @@ public class MeleeTower : Entity
         tapScript.enabled = false;
     }
 
-    void DisplayProgressSlider()
+    public void UpgradeTowerBtn()
     {
-        if (soldierList.Count <= 0 && !upgradeCanvas.activeSelf)
-            progressCanvas.SetActive(true);
-        else
-            progressCanvas.SetActive(false);
+        if (managerStats.GetGold() >= 150)
+        {
+            managerStats.MinusGold(150);
+
+            level = MeleeLevel.LEVEL2;
+            
+            towerButton.GetComponent<Image>().sprite = upgradeImg;
+            upgradeButton.gameObject.SetActive(false);
+        }   
     }
 
     float CalculateProgress() { return spawnTimer / spawnDur; }
 
-    public Vector3 SavedRallypoint()
-    { return rallyPoint.transform.position; }
+    public Vector3 SavedRallypoint() { return rallyPoint.transform.position; }
 }

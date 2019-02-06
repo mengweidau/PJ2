@@ -18,18 +18,16 @@ public class EnemyTroll : Entity
     private float health;
 
     [SerializeField] GameObject canvas;
-
-    EnemyTroll()
-    {
-        s_name = "Troll";
-    }
+    List<GameObject> clearList;
 
     // Use this for initialization
     void Start()
     {
         targetWaypoint = Waypoints.waypoints[0];
 
+        s_name = "Troll";
         health = f_health;
+        clearList = new List<GameObject>();
 
         sm = new StateMachine();
         sm.AddState(new TrollPatrol("Patrol", this));
@@ -124,5 +122,25 @@ public class EnemyTroll : Entity
                 attackingTargets.Add(targets[i]);
             }
         }
+    }
+
+    public void RefreshTargList()
+    {
+        // adds non-null gameobjects into clear list
+        for (int i = 0; i < GetAttackingTargets().Count; i++)
+        {
+            if (GetAttackingTargets()[i])
+                clearList.Add(GetAttackingTargets()[i]);
+        }
+
+        //clear the targList
+        GetAttackingTargets().Clear();
+
+        //add back gameobjects from clearList to targList
+        for (int i = 0; i < clearList.Count; i++)
+            GetAttackingTargets().Add(clearList[i]);
+
+        //clear the clearList
+        clearList.Clear();
     }
 }

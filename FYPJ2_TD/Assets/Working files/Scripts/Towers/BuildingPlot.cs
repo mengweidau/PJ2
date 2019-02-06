@@ -23,6 +23,9 @@ public class BuildingPlot : Entity
     Button plotButton;
     Slider progressSlider;
     TextMeshProUGUI arw_goldText, arw_woodText, mle_goldText, mle_woodText, lyard_goldText;
+
+    //default rallypoint position
+    Transform defaultRallyPos;
     
     ManagerStats managerStats;
 
@@ -47,6 +50,9 @@ public class BuildingPlot : Entity
     {
         InitCanvas();
         InitTextGUI();
+
+        if (transform.Find("DefaultRallypoint"))
+            defaultRallyPos = transform.Find("DefaultRallypoint");
         managerStats = GameObject.Find("Canvas").GetComponent<ManagerStats>();
         
         buildTimer = 0.0f;
@@ -85,7 +91,7 @@ public class BuildingPlot : Entity
                 {
                     GameObject go = Instantiate(lumberPrefab, transform.position, transform.rotation);
                     go.GetComponent<Lumberyard>().SetParentPlot(this);
-                    Debug.Log("built lumber house");
+                    //Debug.Log("built lumber house");
                 }
                 break;
             case BuildingType.ArcherTower:
@@ -93,7 +99,7 @@ public class BuildingPlot : Entity
                 {
                     GameObject go = Instantiate(archerPrefab, transform.position, transform.rotation);
                     go.GetComponent<ArcherTower>().SetParentPlot(this);
-                    Debug.Log("built archer tower");
+                    //Debug.Log("built archer tower");
                 }
                 break;
             case BuildingType.FootmanTower:
@@ -101,7 +107,8 @@ public class BuildingPlot : Entity
                 {
                     GameObject go = Instantiate(meleePrefab, transform.position, transform.rotation);
                     go.GetComponent<MeleeTower>().SetParentPlot(this);
-                    Debug.Log("built melee tower");
+                    go.GetComponent<MeleeTower>().SetRallyPoint(defaultRallyPos.position);
+                    //Debug.Log("built melee tower");
                 }
                 break;
             default:

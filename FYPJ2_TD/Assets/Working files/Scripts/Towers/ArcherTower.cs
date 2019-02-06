@@ -7,12 +7,15 @@ public class ArcherTower : Entity {
 
     [SerializeField] float attackTimer;
     [SerializeField] int numOfTargets;
-    //[SerializeField] private List<GameObject> shootingTargets;
     [SerializeField] BuildingPlot parentPlot;
     [SerializeField] GameObject arrowPrefab;
+
+    //ui related
+    [SerializeField] Sprite upgradeImg;
     [SerializeField] GameObject towerCanvas, upgradeCanvas;
-    Button towerButton;
-    GameObject canvas;
+    Button towerButton, upgradeButton;
+
+    ManagerStats managerStats;
 
     enum ArcherLevel
     {
@@ -21,30 +24,16 @@ public class ArcherTower : Entity {
     }
     ArcherLevel level = ArcherLevel.Level1;
 
-	public ArcherTower()
-    {
-        f_health = 10.0f;
-        f_attackDmg = 2.0f;
-        f_attackSpeed = 3.0f;
-        s_name = "Archer Tower";
-    }
-
     private void Awake()
     {
+        s_name = "Archer Tower";
+        f_attackDmg = 1.0f;
+        f_attackSpeed = 2.0f;
+
         attackTimer = 0.0f;
         numOfTargets = 1;
 
-        if (transform.Find("TowerCanvas"))
-        {
-            towerCanvas = transform.Find("TowerCanvas").gameObject;
-            towerButton = towerCanvas.transform.Find("TowerButton").GetComponent<Button>();
-        }
-        if (transform.Find("UpgradeCanvas"))
-        {
-            upgradeCanvas = transform.Find("UpgradeCanvas").gameObject;
-            upgradeCanvas.SetActive(false);
-        }
-        canvas = GameObject.Find("Canvas");
+        InitialiseCanvas();
     }
 
     private void Update()
@@ -73,6 +62,22 @@ public class ArcherTower : Entity {
         }
     }
 
+    private void InitialiseCanvas()
+    {
+        if (transform.Find("TowerCanvas"))
+        {
+            towerCanvas = transform.Find("TowerCanvas").gameObject;
+            towerButton = towerCanvas.transform.Find("TowerButton").GetComponent<Button>();
+        }
+        if (transform.Find("UpgradeCanvas"))
+        {
+            upgradeCanvas = transform.Find("UpgradeCanvas").gameObject;
+            upgradeCanvas.SetActive(false);
+            upgradeButton = upgradeCanvas.transform.Find("UpgradeButton").GetComponent<Button>();
+        }
+        managerStats = GameObject.Find("Canvas").GetComponent<ManagerStats>();
+    }
+
     private void DetermineShootingTargets()
     {
         if (attackingTargets.Count < numOfTargets && targets.Count != 0)
@@ -89,11 +94,9 @@ public class ArcherTower : Entity {
         if (attackingTargets.Count > 0)
         {
             attackTimer += Time.deltaTime * 1.0f;
-            //Debug.Log("archer shoot timer: " +attackTimer);
 
             if (arrowPrefab != null && attackTimer > f_attackSpeed)
             {
-                //Debug.Log("shot");
                 AudioManager.instance.PlayShoot();
                 GameObject arrow = Instantiate(arrowPrefab, transform.position, Quaternion.identity);
                 arrow.GetComponent<Arrow>().SetParentTower(this);
@@ -131,8 +134,8 @@ public class ArcherTower : Entity {
         wood = (int)(wood * 0.25f);
 
         //return cost
-        canvas.GetComponent<ManagerStats>().AddGold(gold);
-        canvas.GetComponent<ManagerStats>().AddLumber(wood);
+        managerStats.AddGold(gold);
+        managerStats.AddLumber(wood);
 
         //destroy this tower
         parentPlot.PlotReturn();
@@ -150,6 +153,25 @@ public class ArcherTower : Entity {
     {
         upgradeCanvas.SetActive(false);
         towerButton.interactable = true;
+    }
+
+    public void UpgradeTowerBtn()
+    {
+        if (managerStats.GetGold() >= 100 && managerStats.GetLumber() >= 25)
+        {
+            managerStats.MinusGold(100);
+            managerStats.MinusLumber(25);
+
+            level = ArcherLevel.Level2;
+            
+            towerButton.GetComponent<Image>().sprite = upgradeImg;
+            upgradeButton.gameObject.SetActive(false);
+            upgradeCanvas.SetActive(false);
+            towerButton.interactable = true;
+
+            f_attackDmg = 2.0f;
+            f_attackSpeed = 2.5f;
+        }
     }
 
     void CheckNullTargets()
