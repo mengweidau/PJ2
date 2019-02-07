@@ -26,9 +26,9 @@ public class CameraManager : MonoBehaviour {
 	void Update () {
         PcControls();
 
-#if UNITY_ANDROID
-        MobileCameraControls();
-#endif
+//#if UNITY_ANDROID
+//        MobileCameraControls();
+//#endif
 
         //panning limit
         transform.position = new Vector3(
